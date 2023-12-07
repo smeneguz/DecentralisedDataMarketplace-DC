@@ -18,8 +18,6 @@ First, clone the repository in local:
 git clone https://gitlab.com/FutureCitiesCommunities/Blockchain/data-cellar/marketplace.git
 ```
 
-Take attention the repository is private and so you need specfic allowances to clone the repo and modify some stuff!
-In case you are not able to clone send an email to the owner of the repository: **alessandro.mozzato@linksfoundation.com**.
 After that you can start installing all modules associated to the project (you should run the command inside the repo path):
 
 ```bash
