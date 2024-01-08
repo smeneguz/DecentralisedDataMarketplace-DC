@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Ip, Post, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import {
@@ -27,3 +27,5 @@ export class AuthController {
     return this.authService.signIn(signInDto.username, signInDto.password);
   }
 }
+
+//@Ip() ip --> per avere le informazioni sull'ip con cui l'utente si sta connettendo

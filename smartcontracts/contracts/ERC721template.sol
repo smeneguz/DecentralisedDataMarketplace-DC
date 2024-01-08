@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.22 <0.9.0;
+pragma solidity ^0.8.2;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Create2.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "./FactoryERC721.sol";
-import "./ERC20template.sol";
+import "./interfaces/IFactoryERC721.sol";
+import "./interfaces/IERC20template.sol";
 
 contract ERC721template is
     ERC721("Template", "TemplateSymbol"),
@@ -181,6 +181,7 @@ contract ERC721template is
     //NFT owner is the only one who can generate erc20 contract
 
     function createERC20(
+        uint256 _templateIndex,
         string[] calldata strings,
         address[] calldata addresses,
         uint256 uints,
@@ -193,7 +194,8 @@ contract ERC721template is
             "ERC721Template: NOT ERC20DEPLOYER_ROLE"
         );
 
-        address token = FactoryERC721(_tokenFactory).createToken(
+        address token = IFactoryERC721(_tokenFactory).createToken(
+            _templateIndex,
             strings,
             addresses,
             uints,
@@ -224,7 +226,7 @@ contract ERC721template is
             deployedERC20[licenseConsume] == true,
             "ERC721template: license not defined"
         );
-        ERC20template license = ERC20template(payable(licenseConsume));
+        IERC20template license = IERC20template(payable(licenseConsume));
         string memory licensetype = license.getlicenseType();
         require(
             license.balanceOf(msg.sender) > 0,
@@ -268,24 +270,6 @@ contract ERC721template is
             }
         }
     }
-
-    function deleteLicense(address _erc20, address[] memory templateLicenses, address[] memory factoryLicenses) external {
-        require(deployedERC20[_erc20] == true, "DL1");
-        require(msg.sender == _erc20, "DL2");
-        deployedERC20[_erc20] = false;
-        deployedERC20List = templateLicenses;
-        FactoryERC721 factory = FactoryERC721(payable(_tokenFactory));
-        factory.deleteLicense(_erc20, address(this), factoryLicenses);
-    }
-
-    function deleteNft(address[] memory nftList) external {
-        require(deployedERC20List.length == 0, "There are still some licenses!");
-        require(_owner == msg.sender, "Not the owner!");
-        FactoryERC721 factory = FactoryERC721(payable(_tokenFactory));
-        factory.deleteNFT(address(this), nftList);
-        selfdestruct(payable(msg.sender));
-    }
-
 
     /**
      * @dev name
@@ -347,5 +331,34 @@ contract ERC721template is
 
     function getFactory() public view returns (address) {
         return _tokenFactory;
+    }
+
+    function deleteLicense(address _erc20, address[] memory templateLicenses, address[] memory factoryLicenses) external {
+        require(deployedERC20[_erc20] == true, "DL1");
+        require(msg.sender == _erc20, "DL2");
+        deployedERC20[_erc20] = false;
+        deployedERC20List = templateLicenses;
+        IFactoryERC721 factory = IFactoryERC721(payable(_tokenFactory));
+        factory.deleteLicense(_erc20, address(this), factoryLicenses);
+    }
+
+    function deleteNft(address[] memory nftList) external {
+        require(deployedERC20List.length == 0, "There are still some licenses!");
+        require(_owner == msg.sender, "Not the owner!");
+        IFactoryERC721 factory = IFactoryERC721(payable(_tokenFactory));
+        factory.deleteNFT(address(this), nftList);
+        selfdestruct(payable(msg.sender));
+    }
+
+    function setName(string memory _newName) external onlyNFTOwner{
+        _name = _newName;
+    }
+
+    function setSymbol(string memory _newSymbol) external onlyNFTOwner {
+        _symbol = _newSymbol;
+    }
+
+    function setTransferable(bool _newTransferable) external onlyNFTOwner {
+        transferable = _newTransferable;
     }
 }

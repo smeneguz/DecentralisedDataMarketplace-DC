@@ -10,7 +10,7 @@ export class DatasetLicenseDto{
     @ApiProperty({required: false})
     readonly periodMonth?: number;
     @ApiProperty()
-    readonly price: string; 
+    readonly price: string;
     @ApiProperty()
-    readonly address: string;
+    readonly address: string; 
 }

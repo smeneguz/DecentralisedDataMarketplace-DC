@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.22 <0.9.0;
+pragma solidity ^0.8.2;
 
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-
-import "./ERC721template.sol";
-import "./FactoryERC721.sol";
+import "./interfaces/IERC721template.sol";
 
 contract ERC20template is
     ERC20("test", "testSymbol"),
@@ -178,13 +176,6 @@ contract ERC20template is
         _userStartPolicy[_customer] = _dateTimestamp;
     }
 
-    function deleteLicense(address _erc721, address[] memory templateLicenses, address[] memory factoryLicenses) external {
-        require(_minter[msg.sender] == true, "DL1"); //può chiamarla solo l'owner della licenza
-        ERC721template erc721template = ERC721template(payable(_erc721));
-        erc721template.deleteLicense(address(this), templateLicenses, factoryLicenses);
-        selfdestruct(payable(msg.sender));
-    }
-
     /**
      * @dev name
      *      It returns the token name.
@@ -235,6 +226,14 @@ contract ERC20template is
         return _userStartPolicy[_customer];
     }
 
+
+    function deleteLicense(address _erc721, address[] memory templateLicenses, address[] memory factoryLicenses) external {
+        require(_minter[msg.sender] == true, "DL1"); //può chiamarla solo l'owner della licenza
+        IERC721template erc721template = IERC721template(payable(_erc721));
+        erc721template.deleteLicense(address(this), templateLicenses, factoryLicenses);
+        selfdestruct(payable(msg.sender));
+    }
+
     /**
      * @dev cap
      *      it returns the capital.
@@ -252,6 +251,34 @@ contract ERC20template is
 
     function isInitialized() external view returns (bool) {
         return initialized;
+    }
+
+    function setName(string memory _newName) external {
+        require(_minter[msg.sender] == true, "ERC20template: not the owner!");
+        _name = _newName;
+    }
+
+    function setSymbol(string memory _newSymbol) external {
+        require(_minter[msg.sender] == true, "ERC20template: not the owner!");
+        _symbol = _newSymbol;
+    }
+
+    function setPrice(uint256 _newPrice) external {
+        require(_minter[msg.sender] == true, "ERC20template: not the owner!");
+        _price = _newPrice;
+    }
+
+    function setPeriod(uint256 _newPeriod) external {
+        require(_minter[msg.sender] == true, "ERC20template: not the owner!");
+        require(keccak256(abi.encodePacked(_licenseType)) == keccak256(abi.encodePacked("period")), "ERC20template: not periodic license");
+        require(_newPeriod > 0, "ERC20template: 0 is not valid value");
+        _licensePeriod = _newPeriod;
+    }
+
+    function setCap(uint256 _newCap) external {
+        require(_minter[msg.sender] == true, "ERC20template: not the owner!");
+        require( totalSupply() <= _newCap, "ERC20template: cap is too low");
+        _cap = _newCap;
     }
 
     /**

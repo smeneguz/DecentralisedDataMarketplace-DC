@@ -10,7 +10,7 @@ export class LicensePeriodDto{
     @ApiProperty()
     readonly symbol: string;
     @ApiProperty()
-    readonly minters: string[];
+    readonly minters: string[]; //keep attention it should be length = 3!
     @ApiProperty()
     readonly cap: number;
     @ApiProperty()
@@ -27,7 +27,7 @@ export class LicenseUsageDto{
     @ApiProperty()
     readonly symbol: string;
     @ApiProperty()
-    readonly minters: string[];
+    readonly minters: string[]; //keep attention it should be length = 3!
     @ApiProperty()
     readonly cap: number;
 }

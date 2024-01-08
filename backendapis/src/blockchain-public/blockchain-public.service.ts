@@ -1,22 +1,25 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import ncrypt from 'ncrypt-js';
 import web3Init from 'src/utils/web.core';
-import template721 from '../utils/ERC721template.json'
-import template20 from '../utils/ERC20template.json'
+import template721 from '../utils/misc/ERC721template.json'
+import template20 from '../utils/misc/ERC20template.json'
 import * as dotenv from 'dotenv'
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 dotenv.config()
 
 @Injectable()
 export class BlockchainPublicService {
-    constructor(@InjectRepository(User) private readonly userRepository: Repository<User>){
+    constructor(/*@InjectRepository(User) private readonly userRepository: Repository<User>*/
+        private readonly prisma: PrismaService
+    ){
     }
 
     async getAddressAndKey(username: string){
-        const user = await this.userRepository.findOne({where: {username}})
+        const user = await this.prisma.user.findUnique({where: {username}})
         if (!user){
           throw Error('Header Error!')
         }

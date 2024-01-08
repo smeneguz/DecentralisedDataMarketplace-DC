@@ -5,6 +5,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
+import { PrismaModule } from 'src/prisma/prisma.module';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Module({
   imports: [
@@ -12,9 +14,10 @@ import { User } from 'src/user/entities/user.entity';
       secret: process.env.JWT_SECRET, // Replace with your secret key
       signOptions: { expiresIn: '1h' }, // Customize token expiration
    }),
-   TypeOrmModule.forFeature([User]),
+   //TypeOrmModule.forFeature([User]),
+   PrismaModule
   ],
-  providers: [BlockchainPublicService, AuthGuard ],
+  providers: [BlockchainPublicService, AuthGuard, PrismaService],
   controllers: [BlockchainPublicController]
 })
 export class BlockchainPublicModule {}

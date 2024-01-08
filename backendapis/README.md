@@ -106,7 +106,7 @@ $npm install
 Download and enable all the container through Docker
 
 ```bash
-$docker-compose up -d
+$docker compose up -d
 ```
 To verify that containers have indeed been made available on your local machine, run the command
 
@@ -124,13 +124,42 @@ We are shown the list of services available locally within docker containers. In
 - **Postgres**: the offchain database for storing user information accessible on port 5432;
 - **Redis**: the service for initialising and using queues for handling requests on the blockchain listening on port 6379.
 
-Now exit the repository from the command line and clone the smart contract repository:
+Initialize Database with following command
+
+```bash
+$npx prisma migrate dev
+
+
+Applying migration `20231219140333_`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20231219140333_/
+    └─ migration.sql
+
+Your database is now in sync with your schema.
+
+✔ Generated Prisma Client (v5.7.0) to ./src/prisma/client in 52ms
+```
+
+Now exit the repository from the command line and clone the smart contract repository (**branch main**):
 
 ```bash
 $cd ..
 $git clone https://gitlab.com/FutureCitiesCommunities/Blockchain/data-cellar/smartcontracts.git
 ```
-Follow the repository's instructions for successful installation of Smart Contracts on the local private blockchain
+Follow the repository's instructions (installation section) for successful installation of Smart Contracts on the local private blockchain
+
+At this point the contracts are deployed on the blockchain. However, it is still necessary to upload in this repo the abi of the various contracts, otherwise we will not be able to call up and use the functions they expose. You can copy it through cmd or manually as you prefer.
+
+```bash
+$cd /root/to/smartcontracts/repo
+$cp build/contracts/ERC721template.json ../backendapis/src/utils/misc
+$cp build/contracts/ERC20template.json ../backendapis/src/utils/misc
+$cp build/contracts/FactoryERC721.json ../backendapis/src/utils/misc
+$cp build/contracts/DataCellarToken.json ../backendapis/src/utils/misc
+```
 
 Once this is done, return to the current repository path and start the server listening on port 3000:
 
@@ -180,7 +209,8 @@ Here we can find listed information about the project structure and organisation
 ### Folder Structure
 
     .
-    ├── dist                      # Compiled files 
+    ├── dist                      # Compiled files
+    ├── prisma                    # Migration file for database initialisation
     ├── img                       # Images for README documentation
     └── src                       # Source files
         ├── auth                  # Authentication functionality
@@ -190,6 +220,7 @@ Here we can find listed information about the project structure and organisation
         ├── middleware            # Middleware to enable logger
         ├── user                  # User module 
         ├── utils                 # Smart contracts ABI
+        ├── prisma                # Connection with database
         └──[...]
     ├── test                    # Automated tests (empty at the moment)
     ├── .env                   # Environment file

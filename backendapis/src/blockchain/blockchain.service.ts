@@ -2,8 +2,8 @@ import { HttpException, Injectable, HttpStatus  } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
 import web3Init from 'src/utils/web.core';
 import { Repository } from 'typeorm';
-import template721 from '../utils/ERC721template.json'
-import template20 from '../utils/ERC20template.json'
+import template721 from '../utils/misc/ERC721template.json'
+import template20 from '../utils/misc/ERC20template.json'
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { PublishDataDto } from './dto/publish-data.dto';
@@ -13,13 +13,16 @@ import { LicensePeriodPurchaseDto, LicenseUsagePurchaseDto } from './dto/license
 import { ConsumeNftDto } from './dto/consume-nft.dto';
 import { GetDatasetServiceUploaded } from './dto/dataset-get.dto';
 import { DatasetLicenseDto } from './dto/dataset-licenses.dto';
+import { UpdateDataDto } from './dto/dataset-update.dto';
+import { UpdateLicenseDto } from './dto/license-update.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 var ncrypt = require("ncrypt-js")
 
 @Injectable()
 export class BlockchainService {
-    constructor(@InjectQueue('transactions') private queue: Queue, @InjectRepository(User) private readonly userRepository: Repository<User>){}
+    constructor(@InjectQueue('transactions') private queue: Queue, /*@InjectRepository(User) private readonly userRepository: Repository<User>*/private readonly prisma: PrismaService){}
 
-    async newUserOnBlockchain(user: User){ 
+    async newUserOnBlockchain(user: any){ 
         return this.queue.add(
             'New_User_on_blockchain',
             user
@@ -38,6 +41,18 @@ export class BlockchainService {
         }
     }
 
+    async publishLicensePeriod(publishLicensePeriod: LicensePeriodDto, credentials: any){
+        try{
+            this.queue.add(
+                'Publish_License_Period',
+                {publishLicensePeriod, credentials}
+            )
+            return true
+        } catch(err: any){
+            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
     async publishLicenseUsage(publishLicenseUsage: LicenseUsageDto, credentials: any){
         try{
             this.queue.add(
@@ -50,11 +65,60 @@ export class BlockchainService {
         }
     }
 
+    async purchaseLicensePeriod(purchaseLicensePeriod: LicensePeriodPurchaseDto, credentials: any){
+        try{
+            this.queue.add(
+                'Purchase_License_Period',
+                {purchaseLicensePeriod, credentials}
+            )
+            return true
+        }catch(err: any){
+            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+
     async purchaseLicenseUsage(purchaseLicenseUsage: LicenseUsagePurchaseDto, credentials: any){
         try{
             this.queue.add(
                 'Purchase_License_Usage',
                 {purchaseLicenseUsage, credentials}
+            )
+            return true
+        }catch(err: any){
+            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async updateNft(address: string, privateKey: string, nftAddress: string, updateData: UpdateDataDto){
+        try{
+            this.queue.add(
+                'Update_NFT',
+                {address, privateKey, nftAddress, updateData}
+            )
+            return true
+        } catch(err: any){
+            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async updateLicense(address: string, privateKey: string, nftAddress: string, licenseAddress: string, updateDataLicense: UpdateLicenseDto){
+        try{
+            this.queue.add(
+                'Update_License_Nft',
+                {address, privateKey, nftAddress, licenseAddress, updateDataLicense}
+            )
+            return true
+        }catch(err: any){
+            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async deleteNft(address: string, privateKey: string, nftAddress: string){
+        try{
+            this.queue.add(
+                'Delete_Nft',
+                {address, privateKey, nftAddress}
             )
             return true
         }catch(err: any){
@@ -74,16 +138,16 @@ export class BlockchainService {
         }
     }
 
-    async deleteNft(address: string, privateKey: string, nftAddress: string){
+    async consumeNft(consumeNft: ConsumeNftDto, credentials: any){
         try{
             this.queue.add(
-                'Delete_Nft',
-                {address, privateKey, nftAddress}
+                'Consume_NFT',
+                {consumeNft, credentials}
             )
-            return true;
+            return true
         }catch(err: any){
             throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
-        } 
+        }
     }
 
 
@@ -96,7 +160,7 @@ export class BlockchainService {
 
             const NFTlist = await Promise.all(response.map(async (nftAddress: string) =>{
                 const erc721template = new chainObj.web3.eth.Contract(template721.abi as any, nftAddress);
-                const transferable = await erc721template.methods.transferable().call({from: address});;
+                const transferable = await erc721template.methods.transferable().call({from: address});
                 const ownerAddress = await erc721template.methods.ownerAddress().call({from: address});
                 if(address == ownerAddress){
                     const name = await erc721template.methods.name().call({from: address});
@@ -187,7 +251,7 @@ export class BlockchainService {
             return nft_DataLicenses;
         } catch(err: any){
             console.log(err);
-            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
+            return err;
         }
     }
 
@@ -238,6 +302,31 @@ export class BlockchainService {
         }
     }
 
+    async verifyLicense(address: string, privateKey: string, nftAddress: string, licenseAddress: string){
+        try{
+            const chainObj = web3Init();
+            const ncryptObject = new ncrypt(process.env.encryption_KEY!)
+            chainObj.web3.eth.accounts.wallet.add(ncryptObject.decrypt(privateKey));
+
+            const erc721contract = new chainObj.web3.eth.Contract(template721.abi as any, nftAddress);
+            const existLicense = await erc721contract.methods.isDeployed(licenseAddress).call();
+            if(existLicense == false){ 
+                throw Error("License address doesn't match with nft address")
+            }
+            const erc20contract = new chainObj.web3.eth.Contract(template20.abi as any, licenseAddress);
+            const balance = await erc20contract.methods.balanceOf(address).call();
+            if(balance > 0){
+                return true
+            } else {
+                throw Error("License not purchased")
+            }
+        } catch(err: any){
+            console.log(err)
+            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+
     async getBalance(address: string, privateKey: string): Promise<number>{
         try{
             const chainObj = web3Init();
@@ -251,9 +340,23 @@ export class BlockchainService {
         }
     }
 
+    async getGasBalance(address: string, privateKey: string): Promise<number>{
+        try{
+            const chainObj = web3Init();
+            const ncryptObject = new ncrypt(process.env.encryption_KEY!)
+            chainObj.web3.eth.accounts.wallet.add(ncryptObject.decrypt(privateKey));
+            const balance = await chainObj.web3.eth.getBalance(address)
+            return parseInt(balance)
+        }catch(error: any){
+            return error
+        }
+    }
+
+
 
     async getAddressAndKey(username: string){
-        const user = await this.userRepository.findOne({where: {username}})
+        //const user = await this.userRepository.findOne({where: {username}})
+        const user = await this.prisma.user.findUnique({where: {username}})
         if (!user){
           throw Error('Header Error!')
         }

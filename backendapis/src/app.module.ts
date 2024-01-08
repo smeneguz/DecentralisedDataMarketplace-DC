@@ -9,19 +9,13 @@ import { BlockchainModule } from './blockchain/blockchain.module';
 import { BullModule } from '@nestjs/bull';
 import { RequestLoggerMiddleware } from './middleware/request-logger.middleware';
 import { BlockchainPublicModule } from './blockchain-public/blockchain-public.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 require('dotenv').config()
 
 @Module({
   imports: [
     /*
-    KeycloakConnectModule.register({
-      authServerUrl: 'http://localhost:8080',
-      realm: 'datacellar-users',
-      clientId: 'my-client-id',
-      secret: 'my-client-secret',
-    }),
-    */
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -33,6 +27,7 @@ require('dotenv').config()
       synchronize: true,
       logging: true,
   }),
+  */
   BullModule.forRoot({
     redis: {
       host: '127.0.0.1',
@@ -42,24 +37,12 @@ require('dotenv').config()
   UserModule,
   AuthModule,
   BlockchainModule,
-  BlockchainPublicModule],
+  BlockchainPublicModule,
+  PrismaModule
+],
   controllers: [AppController],
   providers: [
     AppService,
-    /*
-    {
-      provide: APP_GUARD,     
-      useClass: AuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: ResourceGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RoleGuard,
-    },
-    */
   ],
 })
 export class AppModule {

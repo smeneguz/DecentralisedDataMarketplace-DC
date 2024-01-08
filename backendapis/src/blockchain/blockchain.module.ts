@@ -7,9 +7,12 @@ import { User } from 'src/user/entities/user.entity';
 import { BlockchainController } from './blockchain.controller';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
   imports:[
+    PrismaModule,
     BullModule.registerQueue({
       name: 'transactions'
     }),
@@ -17,9 +20,9 @@ import { JwtModule } from '@nestjs/jwt';
       secret: process.env.JWT_SECRET, // Replace with your secret key
       signOptions: { expiresIn: '1h' }, // Customize token expiration
     }),
-    TypeOrmModule.forFeature([User])
+    //TypeOrmModule.forFeature([User])
   ],
-  providers: [BlockchainService, AuthGuard, ReportQueueConsumer],
+  providers: [BlockchainService, AuthGuard, PrismaService, ReportQueueConsumer],
   exports: [BlockchainService],
   controllers: [BlockchainController]
 })

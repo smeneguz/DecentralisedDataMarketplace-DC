@@ -5,19 +5,24 @@ import { User } from 'src/user/entities/user.entity'
 import web3Init from 'src/utils/web.core'
 import { Repository } from 'typeorm'
 import * as dotenv from 'dotenv'
-import template721 from '../utils/ERC721template.json'
-import template20 from '../utils/ERC20template.json'
+import template721 from '../utils/misc/ERC721template.json'
+import template20 from '../utils/misc/ERC20template.json'
 import { LoggerCustom } from 'src/logger/logger'
 import { HttpException, HttpStatus } from '@nestjs/common'
-
+import { UpdateDataDto } from './dto/dataset-update.dto'
+import { UpdateLicenseDto } from './dto/license-update.dto'
+import { PrismaService } from 'src/prisma/prisma.service'
 var ncrypt = require("ncrypt-js")
 
 dotenv.config();
 
+//IMPORTANT: we consider only one static template for NFT and for dataToken. Users are not able to choose a specific template!!!
+
 @Processor('transactions')
 export class ReportQueueConsumer{
     constructor(
-        @InjectRepository(User) private readonly userRepository: Repository<User>
+        //@InjectRepository(User) private readonly userRepository: Repository<User>
+        private readonly prisma: PrismaService
       ) {}
 
     private readonly logger = LoggerCustom();
@@ -39,15 +44,18 @@ export class ReportQueueConsumer{
             .convertEtherToTokens()
             .send({from: info["address"], value: chainObj.web3.utils.toWei('100', 'ether'), gas: 500000})
             .on('transactionHash', async (hash: string) => {
-                //potrebbe essere utile salvare da qualche parte l'hash di tutte le transazioni!!
-                //per ora non lo gestiamo e lo vado a stampare in console
+
             })
             .on('receipt', async (receipt: any) => {
-                //tutti i dati sulla transazione, se arrivo qua è andata a buon fine
-                //console.log(receipt)
-                //const value = await chainObj.DataCellarToken.methods.balanceOf(info["address"]).call({from: info["address"]})
-                //console.log(value)
-                await this.userRepository.save(job.data)
+                //await this.userRepository.save(job.data)
+                await this.prisma.user.create({
+                    data: {
+                        username: job.data.username,
+                        password: job.data.password,
+                        privateKey: job.data.privateKey,
+                        address: job.data.address
+                    }
+                })
                 this.logger.log("New User added. Address: " + info["address"]);
             })
             .on('error', async (error: any) => {
@@ -66,7 +74,7 @@ export class ReportQueueConsumer{
             chainObj.web3.eth.accounts.wallet.add(ncryptObject.decrypt(job.data.credentials.key));
             //console.log(await chainObj.web3.eth.getBalance(credentials.address))
             await chainObj.factory721.methods
-                .ERC721deploy(job.data.publishData["name"], job.data.publishData["symbol"], job.data.publishData["tokenURI"], job.data.publishData["transferable"] as boolean)
+                .ERC721deploy(job.data.publishData["name"], job.data.publishData["symbol"], 1, job.data.publishData["tokenURI"], job.data.publishData["transferable"] as boolean)
                 .send({from: job.data.credentials.address, gas: 5000000})
                 .on('transactionHash', async (hash: string) => {
                     //potrebbe essere utile salvare da qualche parte l'hash di tutte le transazioni!!
@@ -81,7 +89,7 @@ export class ReportQueueConsumer{
                             .status(200)
                             .json({ success: true, data: { name: fields["name"], symbol: fields["symbol"], tokenURI: fields["tokenURI"], transferable: fields["transferable"], nftAddress: receipt.events.createERC721.returnValues.newTokenAddress } })
                         */
-                    this.logger.log("New data or Service correctly added. Receipt: ", receipt)
+                    this.logger.log("New data or Service correctly added. Transaction Hash: ", receipt.transactionHash)
                 })
                 .on('error', async (error: any) => {
                     this.logger.error("Error: Not able to add new Data or Service. "+error)
@@ -99,6 +107,45 @@ export class ReportQueueConsumer{
 
     }
 
+    @Process('Publish_License_Period')
+    async publishLicensePeriod(job: Job<any>){
+        try{
+            const chainObj = web3Init();    
+            const ncryptObject = new ncrypt(process.env.encryption_KEY!)
+            chainObj.web3.eth.accounts.wallet.add(ncryptObject.decrypt(job.data.credentials.key));
+            const erc721 = new chainObj.web3.eth.Contract(template721.abi as any, job.data.publishLicensePeriod.nftAddress)
+            await erc721.methods.
+                createERC20(1, [job.data.publishLicensePeriod.name, job.data.publishLicensePeriod.symbol], job.data.publishLicensePeriod.minters, job.data.publishLicensePeriod.cap, "period", job.data.publishLicensePeriod.price, job.data.publishLicensePeriod.period)
+                .send({from: job.data.credentials.address, gas: 5000000})
+                .on('transactionHash', async (hash: string) => {
+                    //potrebbe essere utile salvare da qualche parte l'hash di tutte le transazioni!!
+                    //per ora non lo gestiamo e lo vado a stampare in console
+                    console.log(hash)
+                })
+                .on('receipt', async (receipt: any) => {
+                    //tutti i dati sulla transazione, se arrivo qua è andata a buon fine
+                    //console.log(receipt)
+                    /*
+                    return res
+                            .status(200)
+                            .json({ success: true, data: { name: licensePeriod.name, symbol: licensePeriod.symbol,  minters: licensePeriod.minters, cap: licensePeriod.cap, type: "period", price: licensePeriod.price, period: licensePeriod.period, licenseAddress: receipt.events.licenseERC20Created.returnValues.licenseErc20} })
+                        */
+                    this.logger.log("New License Period Created! Transaction Hash: "+receipt.transactionHash)
+                })
+                .on('error', async (error: any) => {
+                    this.logger.error("Error: Not able to add License Period. "+error)
+                    /*
+                    return res.status(500).json({ error: 'Internal Server Error', message: error.reason })*/
+                })
+        } catch(error: any){
+            this.logger.error(error)
+            return error;
+            /*
+            res.status(500).json({error: "Bad request", message: error.message})*/
+        }
+
+    }
+
     @Process('Publish_License_Usage')
     async publishLicenseUsage(job: Job<any>){
         try{
@@ -107,7 +154,7 @@ export class ReportQueueConsumer{
             chainObj.web3.eth.accounts.wallet.add(ncryptObject.decrypt(job.data.credentials.key));
             const erc721 = new chainObj.web3.eth.Contract(template721.abi as any, job.data.publishLicenseUsage.nftAddress)
             await erc721.methods.
-                createERC20([job.data.publishLicenseUsage.name, job.data.publishLicenseUsage.symbol], job.data.publishLicenseUsage.minters, job.data.publishLicenseUsage.cap, "usage", job.data.publishLicenseUsage.price, 0)
+                createERC20(1, [job.data.publishLicenseUsage.name, job.data.publishLicenseUsage.symbol], job.data.publishLicenseUsage.minters, job.data.publishLicenseUsage.cap, "usage", job.data.publishLicenseUsage.price, 0)
                     .send({from: job.data.credentials.address, gas: 5000000})
                     .on('transactionHash', async (hash: string) => {
                         //potrebbe essere utile salvare da qualche parte l'hash di tutte le transazioni!!
@@ -121,10 +168,10 @@ export class ReportQueueConsumer{
                                 .status(200)
                                 .json({ success: true, data: { name: job.data.publishLicenseUsage.name, symbol: job.data.publishLicenseUsage.symbol,  minters: job.data.publishLicenseUsage.minters, cap: job.data.publishLicenseUsage.cap, type: "usage", price: job.data.publishLicenseUsage.price, licenseAddress: receipt.events.licenseERC20Created.returnValues.licenseErc20} })
                             */
-                           this.logger.log("New License Usage Created! Receipt: "+receipt)
+                           this.logger.log("New License Usage Created! Transaction Hash: "+receipt.transactionHash)
                     })
                     .on('error', async (error: any) => {
-                        this.logger.error("Error: Not able to add License Usage. "+error)
+                        this.logger.error("Error: Not able to add License Usage. Message: "+error.message)
                         /*return res.status(500).json({ error: 'Internal Server Error', message: error.reason })*/
                     })
         } catch(error: any){
@@ -152,7 +199,9 @@ export class ReportQueueConsumer{
             const totalNeed: number = price*amount;
             const erc721 = new chainObj.web3.eth.Contract(template721.abi as any, job.data.purchaseLicenseUsage["nftAddress"])
             const nftOwner = await erc721.methods.ownerAddress().call({from: job.data.credentials.address})
-            const privateKeyOwner: any = await this.userRepository.findOneBy({address: nftOwner});
+            const privateKeyOwner: any = /*await this.userRepository.findOneBy({address: nftOwner});*/ await this.prisma.user.findUnique({
+                where: {address: nftOwner}
+            })
             chainObj.web3.eth.accounts.wallet.add(ncryptObject.decrypt(privateKeyOwner.privateKey));
             
             //we need to make contract allowances to manage user money to permit exchange of third party
@@ -175,13 +224,13 @@ export class ReportQueueConsumer{
                     //tutti i dati sulla transazione, se arrivo qua è andata a buon fine
                     //console.log(receipt)
                     //const balance = await chainObj.DataCellarToken.methods.balanceOf(job.data.credentials.address).call({from: job.data.credentials.address})
-                    this.logger.log("License Usage correctly purchased. "+receipt)
+                    this.logger.log("License Usage correctly purchased. Transansaction Hash: "+receipt.transactionHash)
                     /*return res
                         .status(200)
                         .json({ success: true, data: "License correctly buyed", balance})*/
                 })
                 .on('error', async (error: any) => {
-                    this.logger.error("Error: Not able to purchase License usage. "+error)
+                    this.logger.error("Error: Not able to purchase License usage. Message: "+error.message)
                     console.log(error)
                     /*return res.status(500).json({ error: 'Internal Server Error', message: error.reason })*/
                 })
@@ -191,6 +240,149 @@ export class ReportQueueConsumer{
             /*res.status(500).json({error: "Bad request", message: error.message})*/
         }
 
+    }
+
+    @Process('Purchase_License_Period')
+    async buyLicensePeriod(job: Job<any>){
+        try{
+            const chainObj = web3Init();
+            const ncryptObject = new ncrypt(process.env.encryption_KEY!)
+            chainObj.web3.eth.accounts.wallet.add(ncryptObject.decrypt(job.data.credentials.key));
+            
+            //calculate total amount of DCT needed to buy the license & nftOwnerAddress
+            const erc20 = new chainObj.web3.eth.Contract(template20.abi as any, job.data.purchaseLicensePeriod["licenseAddress"])
+            const price = await erc20.methods.price().call();
+            const period = await erc20.methods.getlicenseType().call();
+            if(period != "period"){
+                /*return res.status(400).json({ error: 'Bad Request: license '+ job.data.purchaseLicenseperiod["licenseAddress"]+" doesn't exist"})*/
+            }
+            const erc721 = new chainObj.web3.eth.Contract(template721.abi as any, job.data.purchaseLicensePeriod["nftAddress"])
+            const nftOwner = await erc721.methods.ownerAddress().call({from: job.data.credentials.address})
+            const privateKeyOwner: any = /*await this.userRepository.findOneBy({address: nftOwner});*/ await this.prisma.user.findUnique({
+                where: {address: nftOwner}
+            })
+            chainObj.web3.eth.accounts.wallet.add(ncryptObject.decrypt(privateKeyOwner.privateKey));
+            
+            //we need to make contract allowances to manage user money to permit exchange of third party
+            await chainObj.DataCellarToken.methods
+                .approve(await chainObj.factory721.methods.paymentManager().call(), parseInt(price))
+                .send({from: job.data.credentials.address, gas: 50000})
+
+            await erc20.methods
+                .approve(await chainObj.factory721.methods.paymentManager().call(), 1)
+                .send({from: nftOwner, gas: 50000})
+
+            await chainObj.factory721.methods.buyNFTlicensePeriod(job.data.purchaseLicensePeriod["nftAddress"], job.data.purchaseLicensePeriod["licenseAddress"])
+                .send({from: job.data.credentials.address, gas: 5000000})
+                .on('transactionHash', async (hash: string) => {
+                    //potrebbe essere utile salvare da qualche parte l'hash di tutte le transazioni!!
+                    //per ora non lo gestiamo e lo vado a stampare in console
+                    console.log(hash)
+                })
+                .on('receipt', async (receipt: any) => {
+                    //tutti i dati sulla transazione, se arrivo qua è andata a buon fine
+                    //console.log(receipt)
+                    //const balance = await chainObj.DataCellarToken.methods.balanceOf(job.data.credentials.address).call({from: job.data.credentials.address})
+                    /*return res
+                        .status(200)
+                        .json({ success: true, data: "License correctly buyed", balance})*/
+                    this.logger.log("License Period correctly purchased. Transaction Hash: "+receipt.transactionHash)
+                })
+                .on('error', async (error: any) => {
+                    this.logger.error("Error: Not able to purchase License usage. Message: "+error.message)
+                    console.log(error)
+                    /*return res.status(500).json({ error: 'Internal Server Error', message: error.reason })*/
+                })
+        } catch(error: any){
+            this.logger.error(error)
+            return error;
+            /*res.status(500).json({error: "Bad request", message: error.message})*/
+        }
+
+    }
+
+
+    @Process('Update_NFT')
+    async updateNft(job: Job<any>){
+        try{
+            const chainObj = web3Init();
+            const ncryptObject = new ncrypt(process.env.encryption_KEY!)
+            chainObj.web3.eth.accounts.wallet.add(ncryptObject.decrypt(job.data.privateKey));
+
+            const erc721 = new chainObj.web3.eth.Contract(template721.abi as any, job.data.nftAddress);
+            const owner = await erc721.methods.ownerAddress().call();
+            if(owner != job.data.address){
+                throw new Error("Not the owner of the NFT");
+            }
+        
+            //defining a mapping between functions and property to update in the object received
+            const propertyToFunctionMap: Record<keyof UpdateDataDto, (value: any) => Promise<void>> = {
+                name: async (value) =>{
+                    await erc721.methods.setName(value).send({from: job.data.address, gas: 50000});
+                },
+                symbol: async (value) =>{
+                    await erc721.methods.setSymbol(value).send({from: job.data.address, gas: 50000});
+                },
+                tokenURI: async (value) =>{
+                    await erc721.methods.setTokenURI(1, value).send({from: job.data.address, gas: 50000});
+                },
+                transferable: async (value) =>{
+                    await erc721.methods.setTransferable(value).send({from: job.data.address, gas: 50000})
+                }
+            }
+            
+            for(const key in job.data.updateData){
+                    await propertyToFunctionMap[key](job.data.updateData[key]);
+            }
+            this.logger.log("Data "+job.data.nftAddress+" updated");
+
+        } catch(err: any){
+            this.logger.error(err)
+            return err;
+        }
+    }
+
+    @Process('Update_License_Nft')
+    async updateNftLicense(job: Job<any>){
+        try{
+            const chainObj = web3Init();
+            const ncryptObject = new ncrypt(process.env.encryption_KEY!)
+            chainObj.web3.eth.accounts.wallet.add(ncryptObject.decrypt(job.data.privateKey));
+
+            const erc20 = new chainObj.web3.eth.Contract(template20.abi as any, job.data.licenseAddress);
+            const erc721address = await erc20.methods.getERC721Address().call()
+
+            if(erc721address != job.data.nftAddress){
+                throw new Error("License not associated to "+job.data.nftAddress+" nft address");
+            }
+
+            //defining a mapping between functions and property to update in the object received
+            const propertyToFunctionMap: Record<keyof UpdateLicenseDto, (value: any) => Promise<void>> = {
+                name: async (value) =>{
+                    await erc20.methods.setName(value).send({from: job.data.address, gas: 50000});
+                },
+                symbol: async (value) =>{
+                    await erc20.methods.setSymbol(value).send({from: job.data.address, gas: 50000});
+                },
+                price: async (value) =>{
+                    await erc20.methods.setPrice(value).send({from: job.data.address, gas: 50000});
+                },
+                cap: async (value) =>{
+                    await erc20.methods.setCap(value).send({from: job.data.address, gas: 50000});
+                },
+                period: async(value) =>{
+                    await erc20.methods.setPeriod(value).send({from: job.data.address, gas: 50000});
+                }
+            }
+
+            for(const key in job.data.updateDataLicense){
+                await propertyToFunctionMap[key](job.data.updateDataLicense[key]);
+            }
+            this.logger.log("Data License "+job.data.licenseAddress+" updated");
+        } catch(err: any){
+            this.logger.error(err)
+            return err;
+        }
     }
 
     @Process("Delete_License")
@@ -265,4 +457,70 @@ export class ReportQueueConsumer{
             throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
+    @Process('Consume_NFT')
+    async consumeNft(job: Job<any>){
+        try{
+            const chainObj = web3Init();
+            const ncryptObject = new ncrypt(process.env.encryption_KEY!)
+            chainObj.web3.eth.accounts.wallet.add(ncryptObject.decrypt(job.data.credentials.key));
+            
+            const erc721 = new chainObj.web3.eth.Contract(template721.abi as any, job.data.consumeNft["nftAddress"])
+            const erc20 = new chainObj.web3.eth.Contract(template20.abi as any, job.data.consumeNft["licenseAddress"])
+            //nft owner
+            const owner = await erc721.methods.ownerAddress().call();
+            const privateKeyOwner: any = /*await this.userRepository.findOneBy({address: owner});*/await this.prisma.user.findUnique({
+                where: {address: owner}
+            })
+            chainObj.web3.eth.accounts.wallet.add(ncryptObject.decrypt(privateKeyOwner.privatekey));
+            //da verificare l'allowance del proprietario dell'nft e il tizio che ha comprato la licenza
+            const allowanceOwner = await erc20.methods.allowance(owner, job.data.consumeNft["nftAddress"]).call();
+            //da verificare l'allowance di fare erase della licenza nel caso sia usage o il periodo sia finito
+            const allowanceConsumer = await erc20.methods.allowance(job.data.credentials.address, job.data.consumeNft["nftAddress"]).call();
+         
+            //approve to permit contract to manage users funds
+            if(allowanceConsumer == 0){
+                await erc20.methods
+                .approve(job.data.consumeNft["nftAddress"], 1 )
+                .send({from: job.data.credentials.address, gas: 50000})
+            }
+
+            if(allowanceOwner == 0){
+                await erc20.methods
+                .approve(job.data.consumeNft["nftAddress"], 1)
+                .send({from: owner, gas: 50000})
+            }
+    
+            //non viene fatta alcuna distinzione tra le periodiche e le usage. Usi la stessa funzioni per entrambi
+            await erc721.methods.requestConsumeNFT(job.data.consumeNft["licenseAddress"])
+                .send({from: job.data.credentials.address, gas: 5000000})
+                .on('transactionHash', async (hash: string) => {
+                    //potrebbe essere utile salvare da qualche parte l'hash di tutte le transazioni!!
+                    //per ora non lo gestiamo e lo vado a stampare in console
+                    console.log(hash)
+                })
+                .on('receipt', async (receipt: any) => {
+                    //tutti i dati sulla transazione, se arrivo qua è andata a buon fine
+                    //console.log(receipt)
+                    //const dataToken = await erc20.methods.balanceOf(job.data.credentials.address).call();
+                    /*return res
+                        .status(200)
+                        .json({ success: true, data: "NFT license consumed", dataToken})*/
+                    this.logger.log("NFT correctly consumed! Transaction Hash: "+receipt.transactionHash)
+                })
+                .on('error', async (error: any) => {
+                    this.logger.error("Error: Not able to consume NFT. Message: "+error.message)
+                    console.log(error)
+                    //console.log(error)
+                    //return res.status(500).json({ error: 'License erased. You should buy new licenses to consume NFT', message: error.reason})
+                })
+        } catch(error: any){
+            this.logger.error(error)
+            return error;
+            //res.status(500).json({error: "Bad request", message: error.message})
+            
+        }
+
+    }
+
 }

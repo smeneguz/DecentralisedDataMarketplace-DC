@@ -11,7 +11,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Data-Cellar Marketplace')
     .setDescription('The DLT-based Marketplace endpoints')
-    .setVersion('1.0')
+    .setVersion('3.0.0')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);

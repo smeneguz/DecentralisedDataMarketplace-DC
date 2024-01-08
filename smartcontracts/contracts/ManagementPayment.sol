@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
-import "./ERC721template.sol";
-import "./ERC20template.sol";
+import "./interfaces/IERC721template.sol";
+import "./interfaces/IERC20template.sol";
 import "./DataCellarToken.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
@@ -44,8 +44,8 @@ contract ManagementPayment {
             uint date
         )
     {
-        ERC721template nft = ERC721template(payable(_nft));
-        ERC20template license = ERC20template(payable(_erc20license));
+        IERC721template nft = IERC721template(_nft);
+        IERC20template license = IERC20template(_erc20license);
 
         require(
             nft.transferable() == true,
@@ -101,8 +101,8 @@ contract ManagementPayment {
             uint usage
         )
     {
-        ERC721template nft = ERC721template(payable(_nft));
-        ERC20template license = ERC20template(payable(_erc20license));
+        IERC721template nft = IERC721template(_nft);
+        IERC20template license = IERC20template(_erc20license);
 
         require(
             nft.transferable() == true,
