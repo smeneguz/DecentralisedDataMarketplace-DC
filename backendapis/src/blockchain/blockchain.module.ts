@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { BlockchainService } from './blockchain.service';
 import { BullModule } from '@nestjs/bull';
-import { ReportQueueConsumer } from 'src/blockchain/report-queue.consumer';
+import { ReportQueueConsumer } from './report-queue.consumer';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { BlockchainController } from './blockchain.controller';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { PrismaModule } from 'src/prisma/prisma.module';
+import { PrismaService } from '../prisma/prisma.service';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
   imports:[

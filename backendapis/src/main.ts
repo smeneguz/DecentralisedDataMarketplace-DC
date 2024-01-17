@@ -1,22 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { LoggerCustom } from './logger/logger';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: LoggerCustom()
   });
 
-  const config = new DocumentBuilder()
-    .setTitle('Data-Cellar Marketplace')
-    .setDescription('The DLT-based Marketplace endpoints')
-    .setVersion('3.0.0')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  app.enableCors({
+    origin: ['http://localhost:3000'],
+    methods: ["GET", "POST"],
+    credentials: true,
+  });
 
-  await app.listen(3000);
+  await app.listen(3001);
 }
 bootstrap();

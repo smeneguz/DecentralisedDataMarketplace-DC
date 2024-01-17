@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { BlockchainPublicService } from './blockchain-public.service';
 import { BlockchainPublicController } from './blockchain-public.controller';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/user/entities/user.entity';
-import { PrismaModule } from 'src/prisma/prisma.module';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { User } from '../user/entities/user.entity';
+import { PrismaModule } from '../prisma/prisma.module';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Module({
   imports: [

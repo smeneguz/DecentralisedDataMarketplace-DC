@@ -1,31 +1,21 @@
-import { Body, Controller, Ip, Post, Req } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import {
-  ApiOperation,
-  ApiResponse,
-  ApiTags
-} from '@nestjs/swagger';
+import { Credentials } from './credentials.interface';
 
-@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService) { }
 
-  @ApiOperation({ summary: 'Get Access Token' })
-  @ApiResponse({status: 201, description: 'User DataSets or Services Licenses', schema:{
-    type: 'object',
-    properties: {
-      access_token: {
-        type: 'string'
-      }
-    },
-    required: ["access_token"]
-  }})
-  @Post('login')
-  signIn(@Body() signInDto: CreateUserDto): Promise<{access_token: string}> {
-    return this.authService.signIn(signInDto.username, signInDto.password);
-  }
+    @Post('signin')
+    async generateJwtToken(@Body() data: { signature: string, publicAddress: string, nonce: string, credentials: Credentials }): Promise<{ accessToken: any }> {
+        const accessToken = await this.authService.generateJwtToken(data.signature, data.publicAddress,data.nonce, data.credentials);
+        return { accessToken };
+    }
+
+    @Post('signup')
+    async generateVerifiableCredential(@Body() data: { publicAddress: string, credentials: Credentials }): Promise<{ vcJwt: any }> {
+        const vcJwt = await this.authService.generateVerifiableCredential(data.publicAddress, data.credentials);
+        return { vcJwt };
+    }
 }
 
-//@Ip() ip --> per avere le informazioni sull'ip con cui l'utente si sta connettendo

@@ -5,10 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
-import { BlockchainService } from 'src/blockchain/blockchain.service';
+import { BlockchainService } from '../blockchain/blockchain.service';
 import { BullModule } from '@nestjs/bull';
-import { PrismaModule } from 'src/prisma/prisma.module';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaModule } from '../prisma/prisma.module';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Module({
   imports: [
