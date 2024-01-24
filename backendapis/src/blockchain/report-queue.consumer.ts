@@ -27,115 +27,6 @@ export class ReportQueueConsumer{
 
     private readonly logger = LoggerCustom();
 
-    @Process('Publish_DataSet')
-    async dataPublicationOnChain(job: Job<any>){
-        try {
-            const chainObj = web3Init();
-            //console.log(await chainObj.web3.eth.getBalance(credentials.address))
-            await chainObj.factory721.methods
-                .ERC721deploy(job.data.publishData["name"], job.data.publishData["symbol"], 1, job.data.publishData["tokenURI"], job.data.publishData["transferable"] as boolean)
-                .send({from: job.data.address, gas: 5000000})
-                .on('transactionHash', async (hash: string) => {
-                    //potrebbe essere utile salvare da qualche parte l'hash di tutte le transazioni!!
-                    //per ora non lo gestiamo e lo vado a stampare in console
-                    //console.log(hash)
-                })
-                .on('receipt', async (receipt: any) => {
-                    //tutti i dati sulla transazione
-                    //console.log(receipt.events.createERC721.returnValues.nftAddress)
-                    /*
-                    return res
-                            .status(200)
-                            .json({ success: true, data: { name: fields["name"], symbol: fields["symbol"], tokenURI: fields["tokenURI"], transferable: fields["transferable"], nftAddress: receipt.events.createERC721.returnValues.newTokenAddress } })
-                        */
-                    this.logger.log("New data or Service correctly added. Transaction Hash: ", receipt.transactionHash)
-                })
-                .on('error', async (error: any) => {
-                    this.logger.error("Error: Not able to add new Data or Service. "+error)
-                    /*
-                    return res.status(500).json({ error: 'Internal Server Error', message: error.reason })*/
-                })
-    
-            }catch(err: any){
-                this.logger.error(err)
-                console.log(err)
-                return err
-                /*
-                return res.status(400).json({ error: 'Bad Request', message: err.message })*/
-            }
-
-    }
-
-    @Process('Publish_License_Period')
-    async publishLicensePeriod(job: Job<any>){
-        try{
-            const chainObj = web3Init();    
-            const erc721 = new chainObj.web3.eth.Contract(template721.abi as any, job.data.publishLicensePeriod.nftAddress)
-            await erc721.methods.
-                createERC20(1, [job.data.publishLicensePeriod.name, job.data.publishLicensePeriod.symbol], job.data.publishLicensePeriod.minters, job.data.publishLicensePeriod.cap, "period", job.data.publishLicensePeriod.price, job.data.publishLicensePeriod.period)
-                .send({from: job.data.address, gas: 5000000})
-                .on('transactionHash', async (hash: string) => {
-                    //potrebbe essere utile salvare da qualche parte l'hash di tutte le transazioni!!
-                    //per ora non lo gestiamo e lo vado a stampare in console
-                    console.log(hash)
-                })
-                .on('receipt', async (receipt: any) => {
-                    //tutti i dati sulla transazione, se arrivo qua è andata a buon fine
-                    //console.log(receipt)
-                    /*
-                    return res
-                            .status(200)
-                            .json({ success: true, data: { name: licensePeriod.name, symbol: licensePeriod.symbol,  minters: licensePeriod.minters, cap: licensePeriod.cap, type: "period", price: licensePeriod.price, period: licensePeriod.period, licenseAddress: receipt.events.licenseERC20Created.returnValues.licenseErc20} })
-                        */
-                    this.logger.log("New License Period Created! Transaction Hash: "+receipt.transactionHash)
-                })
-                .on('error', async (error: any) => {
-                    this.logger.error("Error: Not able to add License Period. "+error)
-                    /*
-                    return res.status(500).json({ error: 'Internal Server Error', message: error.reason })*/
-                })
-        } catch(error: any){
-            this.logger.error(error)
-            return error;
-            /*
-            res.status(500).json({error: "Bad request", message: error.message})*/
-        }
-
-    }
-
-    @Process('Publish_License_Usage')
-    async publishLicenseUsage(job: Job<any>){
-        try{
-            const chainObj = web3Init();    
-            const erc721 = new chainObj.web3.eth.Contract(template721.abi as any, job.data.publishLicenseUsage.nftAddress)
-            await erc721.methods.
-                createERC20(1, [job.data.publishLicenseUsage.name, job.data.publishLicenseUsage.symbol], job.data.publishLicenseUsage.minters, job.data.publishLicenseUsage.cap, "usage", job.data.publishLicenseUsage.price, 0)
-                    .send({from: job.data.address, gas: 5000000})
-                    .on('transactionHash', async (hash: string) => {
-                        //potrebbe essere utile salvare da qualche parte l'hash di tutte le transazioni!!
-                        //per ora non lo gestiamo e lo vado a stampare in console
-                        //console.log(hash)
-                    })
-                    .on('receipt', async (receipt: any) => {
-                        //tutti i dati sulla transazione, se arrivo qua è andata a buon fine
-                        //console.log(receipt.events.licenseERC20Created.returnValues)
-                        /*return res
-                                .status(200)
-                                .json({ success: true, data: { name: job.data.publishLicenseUsage.name, symbol: job.data.publishLicenseUsage.symbol,  minters: job.data.publishLicenseUsage.minters, cap: job.data.publishLicenseUsage.cap, type: "usage", price: job.data.publishLicenseUsage.price, licenseAddress: receipt.events.licenseERC20Created.returnValues.licenseErc20} })
-                            */
-                           this.logger.log("New License Usage Created! Transaction Hash: "+receipt.transactionHash)
-                    })
-                    .on('error', async (error: any) => {
-                        this.logger.error("Error: Not able to add License Usage. Message: "+error.message)
-                        /*return res.status(500).json({ error: 'Internal Server Error', message: error.reason })*/
-                    })
-        } catch(error: any){
-            this.logger.error(error)
-            return error;
-            /*res.status(500).json({error: "Bad request", message: error.message})*/
-        }
-    }
-
     @Process('Purchase_License_Usage')
     async buyLicenseUsage(job: Job<any>){
         try{
@@ -243,43 +134,6 @@ export class ReportQueueConsumer{
     }
 
 
-    @Process('Update_NFT')
-    async updateNft(job: Job<any>){
-        try{
-            const chainObj = web3Init();
-
-            const erc721 = new chainObj.web3.eth.Contract(template721.abi as any, job.data.nftAddress);
-            const owner = await erc721.methods.ownerAddress().call({from: job.data.address});
-            if(owner != job.data.address){
-                throw new Error("Not the owner of the NFT");
-            }
-        
-            //defining a mapping between functions and property to update in the object received
-            const propertyToFunctionMap: Record<keyof UpdateDataDto, (value: any) => Promise<void>> = {
-                name: async (value) =>{
-                    await erc721.methods.setName(value).send({from: job.data.address, gas: 50000});
-                },
-                symbol: async (value) =>{
-                    await erc721.methods.setSymbol(value).send({from: job.data.address, gas: 50000});
-                },
-                tokenURI: async (value) =>{
-                    await erc721.methods.setTokenURI(1, value).send({from: job.data.address, gas: 50000});
-                },
-                transferable: async (value) =>{
-                    await erc721.methods.setTransferable(value).send({from: job.data.address, gas: 50000})
-                }
-            }
-            
-            for(const key in job.data.updateData){
-                    await propertyToFunctionMap[key](job.data.updateData[key]);
-            }
-            this.logger.log("Data "+job.data.nftAddress+" updated");
-
-        } catch(err: any){
-            this.logger.error(err)
-            return err;
-        }
-    }
 
     @Process('Update_License_Nft')
     async updateNftLicense(job: Job<any>){
@@ -357,33 +211,6 @@ export class ReportQueueConsumer{
                 .send({from: job.data.address, gas: 5000000})
                 .on('receipt', async (receipt: any) => {
                     this.logger.log("License correctly deleted");
-                })
-        }catch(err: any){
-            console.log(err)
-            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
-
-    @Process("Delete_Nft")
-    async deleteNft(job: Job<any>){ 
-        try{
-            const chainObj = web3Init();
-
-            const erc721 = new chainObj.web3.eth.Contract(template721.abi as any, job.data.nftAddress)
-            let nftList: Array<string> = await chainObj.factory721.methods.geterc721array().call({from: job.data.address});
-            const index = nftList.indexOf(job.data.nftAddress);
-            const newNftList = nftList.filter((item, i) => {
-                if(index !== i){
-                    return item;
-                }
-            })
-            //nftList.splice(index, 1);
-            
-            await erc721.methods.deleteNft(newNftList)
-                .send({from: job.data.address, gas: 5000000})
-                .on('receipt', async (receipt: any) => {
-                    //console.log("licenza distrutta")
-                    this.logger.log("nft correctly deleted");
                 })
         }catch(err: any){
             console.log(err)

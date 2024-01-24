@@ -28,7 +28,6 @@ export class AuthService {
       try {
         const payload = await this.generatePayload(credentials, publicAddress);
         const accessToken = await this.jwtService.signAsync(payload);
-        console.log(accessToken)
         return accessToken;
       } catch (error) {
         throw new UnauthorizedException('Error generating token.');
@@ -74,7 +73,6 @@ export class AuthService {
       const vc = await did_jwt_vc.createVerifiableCredentialJwt(payload, issuer); 
       return vc;
     } catch (error) {
-      console.error('Verifiable Credential creation failed:', error);
       throw new Error('Verifiable Credential creation failed.');
     }
 

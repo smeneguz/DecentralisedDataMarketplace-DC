@@ -5,7 +5,7 @@ import "../App.css";
 import { useMetaMask } from '../hooks/useMetaMask'
 import API from '../hooks/API'
 import video from '../assets/video.mp4';
-import SigninModal from './SigninModal';
+import SigninModal from './ModalSignin';
 import { default as Info } from "../assets/info.svg";
 import { verifyVc } from '../hooks/utils';
 
@@ -77,7 +77,6 @@ function Signin(props) {
                     const region = verifiedVC.verifiableCredential.credentialSubject.region;
                     const credentials = { name, surname, email, profession, country, region }
                     const auth = await API.handleAuthenticate(jwt.signature, wallet.accounts[0], jwt.nonce, credentials);
-                    console.log(auth)
                     props.handleLoggedIn(auth, wallet.accounts[0], credentials);
                   }
                 } else {

@@ -1,7 +1,5 @@
 import web3Init from './we3.core';
 
-
-
 const chainObj = web3Init();
 
 export const convertDataCellarToken = async (address, value) => {

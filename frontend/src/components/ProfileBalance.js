@@ -2,16 +2,16 @@ import { Col, Row, Container, Button, Form } from "react-bootstrap";
 import { default as Logo } from "../assets/logo.png"
 import "../App.css";
 import { default as User } from '../assets/user.svg';
-import DeleteUserModal from './DeleteUserModal';
+import DeleteUserModal from './ModalDeleteUser';
 import { useState, useEffect } from 'react';
 import { convertDataCellarToken, getBalance, getGasBalance } from '../hooks/useMMbalance'
-
+import { validateInteger } from "../hooks/utils";
 import { useMetaMask } from '../hooks/useMetaMask'
 
 
 function ProfileBalance(props) {
 
-  const { wallet, setErrorMessage, isConnecting } = useMetaMask();
+  const { wallet, setErrorMessage, isConnecting, setIsConnecting } = useMetaMask();
 
   const [token, setToken] = useState();
   const [eth, setEth] = useState();
@@ -31,17 +31,14 @@ function ProfileBalance(props) {
     fetchData();
 
     return () => { };
-  }, [wallet, setErrorMessage, props.message]);
+  }, [wallet, setErrorMessage]);
 
-  function validateInteger(number) {
-    const integerRegex = /^\d+$/;
-    return integerRegex.test(number);
-  }
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsConnecting(true)
     if (validateInteger(value)) {
-      console.log(value, eth)
       if (value < eth) {
         try {
           const res = await convertDataCellarToken(wallet.accounts[0], value);
@@ -55,6 +52,7 @@ function ProfileBalance(props) {
       } else {
         setErrorMessage("Invalid input: Please enter a number less than or equal to your Ether");
       }
+      setIsConnecting(false)
     }
   
 

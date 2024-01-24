@@ -12,23 +12,6 @@ export class BlockchainController {
     constructor(private readonly blockchainService: BlockchainService){
     }
 
-    @UseGuards(AuthGuard)
-    @Post('/registerDataset')
-    async uploadData(@Body() publishDataDto: PublishDataDto, @Request() req: any): Promise<boolean>{
-        return await this.blockchainService.publishData(publishDataDto, req.user.publicAddress);
-    }
-
-    @UseGuards(AuthGuard)
-    @Post('/registerLicensePeriod')
-    async uploadLicensePeriod(@Body() publishLicensePeriod: LicensePeriodDto, @Request() req: any): Promise<boolean>{
-        return await this.blockchainService.publishLicensePeriod(publishLicensePeriod, req.user.publicAddress)
-    }
-
-    @UseGuards(AuthGuard)
-    @Post('/registerDatasetOneTimeLicence')
-    async uploadLicenseUsage(@Body() publishLicenseUsage: LicenseUsageDto, @Request() req: any): Promise<boolean>{
-        return await this.blockchainService.publishLicenseUsage(publishLicenseUsage, req.user.publicAddress)
-    }
 
     @UseGuards(AuthGuard)
     @Post('/purchaseDatasetOneTimeLicence')

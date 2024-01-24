@@ -5,7 +5,7 @@ import "../App.css";
 import { useMetaMask } from '../hooks/useMetaMask'
 import video from '../assets/video.mp4';
 import { default as Info } from "../assets/info.svg";
-import LoginModal from './LoginModal';
+import LoginModal from './ModalLogin';
 
 function Login() {
 

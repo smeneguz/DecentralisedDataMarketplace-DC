@@ -62,3 +62,50 @@ export const verifyVc = async (vc) => {
     return false;
   }
 }
+
+export function validateInteger(number) {
+  const integerRegex = /^\d+$/;
+  return integerRegex.test(number);
+}
+
+export function validateSymbol(symbol) {
+  const symbolRegex = /^[a-zA-Z0-9]{2,5}$/;
+  return symbolRegex.test(symbol);
+}
+
+export function validateEthereumAddress(address) {
+  const addressRegex = /^0x[a-fA-F0-9]{40}$/;
+  return addressRegex.test(address);
+}
+
+export function validateDatasetName(name) {
+  const nameRegex = /^[a-zA-Z0-9]{3,15}$/;
+  return nameRegex.test(name);
+}
+
+export function validateNumber(number) {
+  const numberRegex = /^(?:[1-9]\d{0,2}|1000)$/;
+  return numberRegex.test(number);
+}
+
+export function truncateString(inputString) {
+  const maxLength = 8;
+  const ellipsis = '...';
+  if (inputString.length <= maxLength + 6) {
+    return inputString;
+  } else {
+    const truncatedString = inputString.slice(0, maxLength) + ellipsis + inputString.slice(-6);
+    return truncatedString;
+  }
+}
+
+export function truncateString2(inputString) {
+  const maxLength = 14;
+  const ellipsis = '...';
+  if (inputString.length <= maxLength + 10) {
+    return inputString;
+  } else {
+    const truncatedString = inputString.slice(0, maxLength) + ellipsis + inputString.slice(-10);
+    return truncatedString;
+  }
+}

@@ -12,17 +12,6 @@ export class BlockchainPublicController {
         private readonly blockchainPublicService: BlockchainPublicService
         ){}
 
-    @UseGuards(AuthGuard)
-    @Get('viewAllMrktplaceData')
-    async getPublicData(@Request() req: any): Promise<PublicDatasetDto[]>{
-        const res = await this.blockchainPublicService.getAllPublicData(req.user.publicAddress);
-        return res;
-    }
 
-    @UseGuards(AuthGuard)
-    @Get('/viewMrktDatasetLicences')
-    async getPublicDataLicenses(@Query('nftAddress') nftAddress: string, @Request() req: any): Promise<PublicLicenseDto[]>{
-        const res = await this.blockchainPublicService.getNftDataLicenses(req.user.publicAddress, nftAddress);
-        return res;
-    }
+
 }

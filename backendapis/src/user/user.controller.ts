@@ -11,33 +11,7 @@ import { UpdateLicenseDto } from '../blockchain/dto/license-update.dto';
 export class UserController {
   constructor(private readonly blockchainService: BlockchainService) {}
 
-  @UseGuards(AuthGuard)
-  @Get('/balance')
-  async getBalance(@Request() req: any){
-    const balance = await this.blockchainService.getBalance(req.user.publicAddress);
-    return balance;
-  }
 
-  @UseGuards(AuthGuard)
-  @Get('/gasBalance')
-  async getGasBalance(@Request() req: any){
-    const gasBalance = await this.blockchainService.getGasBalance(req.user.publicAddress);
-    return gasBalance;
-  }
-
-  @UseGuards(AuthGuard)
-  @Get('/viewOwnedData')
-  async getPersonalData(@Request() req: any): Promise<GetDatasetServiceUploaded[]>{
-    const personalData = await this.blockchainService.getPersonalData(req.user.publicAddress)
-    return personalData;
-  } 
-
-  @UseGuards(AuthGuard)
-  @Get('/viewOwnedDatasetLicences')
-  async getPersonalDataLicenses(@Query('nftAddress') nftAddress: string, @Request() req: any): Promise<DatasetLicenseDto[]>{
-    const personalData = await this.blockchainService.personalDataLicenses(req.user.publicAddress, nftAddress)
-    return personalData;
-  }
 
   @UseGuards(AuthGuard)
   @Get('/viewPurchasedData')
@@ -61,27 +35,5 @@ export class UserController {
   }
 
 
-  @UseGuards(AuthGuard)
-  @Put('/updateData')
-  async updateData(@Query('nftAddress') nftAddress: string, @Body() updateData: UpdateDataDto, @Request() req: any){
-    return await this.blockchainService.updateNft(req.user.publicAddress, nftAddress, updateData);
-  }
 
-  @UseGuards(AuthGuard)
-  @Put('/updateDataLicense')
-  async updateDataLicense(@Query('nftAddress') nftAddress: string, @Query('licenseAddress') licenseAddress: string, @Body() updateLicenseData: UpdateLicenseDto, @Request() req: any){
-    return await this.blockchainService.updateLicense(req.user.publicAddress, nftAddress, licenseAddress, updateLicenseData);
-  }
-
-  @UseGuards(AuthGuard)
-  @Delete('/deleteDataLicense')
-  async deleteLicense(@Query('nftAddress') nftAddress: string, @Query('licenseAddress') licenseAddress: string, @Request() req: any): Promise<boolean>{
-    return await this.blockchainService.deleteLicense(req.user.publicAddress, nftAddress, licenseAddress);
-  }
-
-  @UseGuards(AuthGuard)
-  @Delete('/deleteData')
-  async deleteNft(@Query('nftAddress') nftAddress: string, @Request() req: any): Promise<boolean>{
-    return await this.blockchainService.deleteNft(req.user.publicAddress, nftAddress);
-  }
 }

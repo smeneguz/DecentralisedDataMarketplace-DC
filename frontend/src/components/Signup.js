@@ -8,9 +8,9 @@ import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
 import API from '../hooks/API'
 import { formatNetwork, validateEmail, validateName, validateProfession, validateSurname } from '../hooks/utils';
 import video from '../assets/video.mp4';
-import SignupModal from './SignupModal';
-import VcModal from './VcModal';
-import SignupConfirmModal from './SignupConfirmModal';
+import SignupModal from './ModalSignup';
+import VcModal from './ModalVc';
+import SignupConfirmModal from './ModalSignupConfirm';
 
 function SignUp(props) {
 

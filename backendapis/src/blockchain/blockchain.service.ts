@@ -22,42 +22,7 @@ var ncrypt = require("ncrypt-js")
 export class BlockchainService {
     constructor(@InjectQueue('transactions') private queue: Queue, private readonly prisma: PrismaService){}
 
-    async publishData(publishData: PublishDataDto, address: string){
-        try{
-            this.queue.add(
-                'Publish_DataSet',
-                {publishData, address}
-            )
-            return true;
-        } catch(err: any){
-            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
-
-    async publishLicensePeriod(publishLicensePeriod: LicensePeriodDto, address: string){
-        try{
-            this.queue.add(
-                'Publish_License_Period',
-                {publishLicensePeriod, address}
-            )
-            return true
-        } catch(err: any){
-            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
-
-    async publishLicenseUsage(publishLicenseUsage: LicenseUsageDto, address: string){
-        try{
-            this.queue.add(
-                'Publish_License_Usage',
-                {publishLicenseUsage, address}
-            )
-            return true;
-        }catch(err: any){
-            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
-
+ 
     async purchaseLicensePeriod(purchaseLicensePeriod: LicensePeriodPurchaseDto, address: string){
         try{
             this.queue.add(
@@ -69,7 +34,6 @@ export class BlockchainService {
             throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
-
 
     async purchaseLicenseUsage(purchaseLicenseUsage: LicenseUsagePurchaseDto, address: string){
         try{
@@ -83,53 +47,6 @@ export class BlockchainService {
         }
     }
 
-    async updateNft(address: string, nftAddress: string, updateData: UpdateDataDto){
-        try{
-            this.queue.add(
-                'Update_NFT',
-                {address, nftAddress, updateData}
-            )
-            return true
-        } catch(err: any){
-            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
-
-    async updateLicense(address: string, nftAddress: string, licenseAddress: string, updateDataLicense: UpdateLicenseDto){
-        try{
-            this.queue.add(
-                'Update_License_Nft',
-                {address, nftAddress, licenseAddress, updateDataLicense}
-            )
-            return true
-        }catch(err: any){
-            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
-
-    async deleteNft(address: string, nftAddress: string){
-        try{
-            this.queue.add(
-                'Delete_Nft',
-                {address, nftAddress}
-            )
-            return true
-        }catch(err: any){
-            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
-
-    async deleteLicense(address: string, nftAddress: string, licenseAddress: string){
-        try{
-            this.queue.add(
-                'Delete_License',
-                {address, nftAddress, licenseAddress}
-            )
-            return true;
-        }catch(err: any){
-            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
 
     async consumeNft(consumeNft: ConsumeNftDto, address: string){
         try{
@@ -142,67 +59,6 @@ export class BlockchainService {
             throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
-
-
-    async getPersonalData(address: string): Promise<GetDatasetServiceUploaded[]>{
-        try{
-            const chainObj = web3Init();
-            const response = await chainObj.factory721.methods.geterc721array().call({from: address})
-
-            const NFTlist = await Promise.all(response.map(async (nftAddress: string) =>{
-                const erc721template = new chainObj.web3.eth.Contract(template721.abi as any, nftAddress);
-                const transferable = await erc721template.methods.transferable().call({from: address});
-                const ownerAddress = await erc721template.methods.ownerAddress().call({from: address});
-                if(address == ownerAddress){
-                    const name = await erc721template.methods.name().call({from: address});
-                    const symbol = await erc721template.methods.symbol().call({from: address});
-                    const getTokenUri = await erc721template.methods.getTokenUri().call({from: address});
-                    return {name, symbol, ownerAddress, getTokenUri, nftAddress, transferable}
-                }
-            }))
-            const NFTlistFiltered = NFTlist.filter((nft: any) => nft !== undefined);
-
-            return NFTlistFiltered;
-        } catch(err: any){
-            console.log(err)
-            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
-
-    async personalDataLicenses(address: string, nftAddress: string): Promise<DatasetLicenseDto[]>{
-        try{
-            const chainObj = web3Init();
-
-            const response = await chainObj.factory721.methods.geterc721array().call({from: address})
-            const erc721contract = new chainObj.web3.eth.Contract(template721.abi as any, nftAddress);
-            const owner = await erc721contract.methods.ownerAddress().call({from: address});
-            if(owner != address){ 
-                throw Error("You are not the owner of the NFT")
-            }
-            const licensesList = await chainObj.factory721.methods.geterc20array(nftAddress).call({from: address});
-            const erc20list = await Promise.all(licensesList.map(async (erc20: string) =>{
-                const erc20template = new chainObj.web3.eth.Contract(template20.abi as any, erc20);
-                const name = await erc20template.methods.name().call({from: address});
-                const symbol = await erc20template.methods.symbol().call({from: address});
-                const type = await erc20template.methods.getlicenseType().call({from: address});
-                const price = await erc20template.methods.price().call({from: address});
-                if(type == "period"){
-                    const periodMonth = await erc20template.methods.getLicensePeriod().call({from: address});
-                    return {name, symbol, type, periodMonth, price, address: erc20}
-                }
-                return {name, symbol, type, price, address: erc20}
-            }))
-            const erc20listFiltered = erc20list.filter((erc20) => erc20 !== undefined);
-            return erc20listFiltered;
-        } catch(err: any){
-            console.log(err)
-            throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
-
-    //Ho notato che un utente che compra una periodica per un dataset/servizio, può tranquillamente comprarne un'altra subito dopo per lo stesso dataset.
-    //non c'è una logica che permetta di aumentare la durata della periodica.
-    //in questo modo l'utente avrebbe due licenze per lo stesso periodo di tempo che non sono necessarie. Potrebbe avere senso inserire un controllo da questo punto di vista?
 
     async getPurchasedData(address: string): Promise<any[]>{
         try{

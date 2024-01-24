@@ -1,7 +1,7 @@
 import { useState, useEffect, createContext, useContext, useCallback } from 'react'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { useNavigate } from 'react-router-dom';
-
+import { jwtDecode } from "jwt-decode";
 
 const disconnectedState = { accounts: [], chainId: '' }
 const MetaMaskContext = createContext({})
@@ -18,6 +18,7 @@ export const MetaMaskContextProvider = ({ children }) => {
   const [opCompleted, setOpCompleted] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [wallet, setWallet] = useState(disconnectedState)
+  const [authState, setAuthState] = useState();
 
   const clearError = () => setErrorMessage('')
 
@@ -29,11 +30,31 @@ export const MetaMaskContextProvider = ({ children }) => {
       setWallet(disconnectedState)
       return
     }
+
+    const cookies = document.cookie.split(';');
+    const authTokenCookie = cookies.find(cookie => cookie.trim().startsWith('authToken='));
+    if (authTokenCookie) {
+      const authToken = authTokenCookie.split('=')[1];
+      const { publicAddress } = jwtDecode(authToken);
+      if (publicAddress !== accounts[0]) {
+        document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        setAuthState(undefined);
+        navigate('/');
+      }
+    }
     const chainId = await window.ethereum.request({
       method: 'eth_chainId',
     })
+
+    if (chainId !== "0x539") {
+      document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      setAuthState(undefined);
+      navigate('/');
+    }
+
+
     setWallet({ accounts, chainId })
-  }, [])
+  }, [navigate])
 
   const updateWalletAndAccounts = useCallback(() => _updateWallet(), [_updateWallet])
   const updateWallet = useCallback((accounts) => _updateWallet(accounts), [_updateWallet])
@@ -220,7 +241,9 @@ export const MetaMaskContextProvider = ({ children }) => {
         setErrorMessage,
         isRegistered,
         unregisterDataCellar,
-        setWallet
+        setWallet,
+        authState,
+        setAuthState
       }}
     >
       {children}
