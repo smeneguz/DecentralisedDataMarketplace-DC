@@ -1,11 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { LoggerCustom } from './logger/logger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    logger: LoggerCustom()
-  });
+  const app = await NestFactory.create(AppModule);
 
   app.enableCors({
     origin: ['http://localhost:3000'],

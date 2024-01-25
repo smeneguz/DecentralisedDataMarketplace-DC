@@ -1,10 +1,10 @@
-import { Injectable, UnauthorizedException  } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as eth_utils from 'ethereumjs-util';
 import * as eth_sign_utils from 'eth-sig-util';
 import * as ethr_did from 'ethr-did';
 import * as did_jwt_vc from 'did-jwt-vc';
-import { Credentials } from './credentials.interface'; 
+import { Credentials } from './credentials.interface';
 import { Issuer, JwtCredentialPayload } from 'did-jwt-vc';
 
 @Injectable()
@@ -70,35 +70,33 @@ export class AuthService {
       });
 
       const payload = await this.generateVcPayload(credentials, holder.did);
-      const vc = await did_jwt_vc.createVerifiableCredentialJwt(payload, issuer); 
+      const vc = await did_jwt_vc.createVerifiableCredentialJwt(payload, issuer);
       return vc;
     } catch (error) {
       throw new Error('Verifiable Credential creation failed.');
     }
-
   }
 
   private async generateVcPayload(credentials: Credentials, did: string): Promise<any> {
     const now = new Date();
-      const timestamp = Math.floor(now.getTime() / 1000);
-      const vcPayload: JwtCredentialPayload = {
-        sub: did,
-        nbf: timestamp,
-        vc: {
-          '@context': ['https://www.w3.org/2018/credentials/v1'],
-          type: ['VerifiableCredential'],
-          credentialSubject: {
-            name: credentials.name,
-            surname: credentials.surname,
-            email: credentials.email,
-            profession: credentials.profession,
-            country: credentials.country,
-            region: credentials.region
-          }
+    const timestamp = Math.floor(now.getTime() / 1000);
+    const vcPayload: JwtCredentialPayload = {
+      sub: did,
+      nbf: timestamp,
+      vc: {
+        '@context': ['https://www.w3.org/2018/credentials/v1'],
+        type: ['VerifiableCredential'],
+        credentialSubject: {
+          name: credentials.name,
+          surname: credentials.surname,
+          email: credentials.email,
+          profession: credentials.profession,
+          country: credentials.country,
+          region: credentials.region
         }
       }
+    }
     return vcPayload;
   }
-
 
 }

@@ -1,15 +1,7 @@
-import { Col, Row, Container, Button, Table, Tooltip, OverlayTrigger } from "react-bootstrap";
-import { default as Logo } from "../assets/logo.png"
+import { Row, Container, Table, Tooltip, OverlayTrigger } from "react-bootstrap";
 import "../App.css";
-import { default as User } from '../assets/user.svg';
-import DeleteUserModal from './ModalDeleteUser';
 import { useState, useEffect } from 'react';
 import { useMetaMask } from '../hooks/useMetaMask'
-import { getOwnDatasets } from '../hooks/useMMdataset'
-import { default as Delete } from '../assets/delete.svg';
-import { default as Update } from '../assets/update.svg';
-import DeleteDatasetModal from './ModalDeleteDataset';
-import UpdateDatasetModal from "./ModalUpdateDataset";
 import { truncateString2 } from "../hooks/utils";
 import { default as License } from '../assets/license.svg';
 import MarketLicenses from "./MarketLicenses";
@@ -18,12 +10,8 @@ import { getPublicDatasets } from "../hooks/useMMmarket";
 function MarketDatasets(props) {
 
   const [datasets, setDatasets] = useState([]);
-  const [selectedDataset, setSelectedDataset] = useState(null);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-
-  const { isConnecting, setErrorMessage, wallet, setIsConnecting } = useMetaMask();
+  const { setErrorMessage, wallet } = useMetaMask();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,9 +22,7 @@ function MarketDatasets(props) {
         setErrorMessage(`${error.message}`);
       }
     };
-
     fetchData();
-
     return () => { };
   }, [wallet.accounts, setErrorMessage, props.message]);
 
@@ -48,8 +34,8 @@ function MarketDatasets(props) {
 
   return (
     <Container>
-      {props.nftMarketAddress ?
-        <MarketLicenses nftMarketAddress={props.nftMarketAddress} setNftMarketAddress={props.setNftMarketAddress} setMessage={props.setMessage} authState={props.authState} /> :
+      {props.nftAddress ?
+        <MarketLicenses nftAddress={props.nftAddress} setNftAddress={props.setNftAddress} setMessage={props.setMessage} authState={props.authState} /> :
         <Container fluid className="mt-5 pt-5 profile home  ">
           <Row className="box-center mb-4">
             <h1 className='formText inline2' > Data Cellar Marketplace </h1>
@@ -83,10 +69,9 @@ function MarketDatasets(props) {
                         </td>
                         <td className=" text-center">
                           <OverlayTrigger placement="bottom" delay={{ show: 250, hide: 400 }} overlay={renderTooltip} >
-                            <img src={License} alt="license" className="select" onClick={() => props.setNftMarketAddress(dataset.nftAddress)} />
+                            <img src={License} alt="license" className="select" onClick={() => props.setNftAddress(dataset.nftAddress)} />
                           </OverlayTrigger>
                         </td>
-
                       </tr>
                     ))
                   ) : (
@@ -97,7 +82,6 @@ function MarketDatasets(props) {
                 </tbody>
               </Table>
             </Container>
-
           </Row>
         </Container>
       }

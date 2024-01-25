@@ -10,8 +10,8 @@ function DeleteLicenseModal(props) {
   const handleDelete = async () => {
     setIsConnecting(true);
     try {
-        await deleteLicense(wallet.accounts[0], props.nftAddress, props.selectedLicense);
-        props.setMessage(`The license saved at address ${props.selectedLicense} was deleted.`);
+      await deleteLicense(wallet.accounts[0], props.nftAddress, props.selectedLicense);
+      props.setMessage(`The license saved at address ${props.selectedLicense} was deleted.`);
     } catch (error) {
       setErrorMessage(`${error.message}`);
     }

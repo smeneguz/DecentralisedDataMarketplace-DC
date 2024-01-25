@@ -1,13 +1,9 @@
 import { Col, Row, Container, Button, Form } from "react-bootstrap";
-import { default as Logo } from "../assets/logo.png"
 import "../App.css";
-import { default as User } from '../assets/user.svg';
-import DeleteUserModal from './ModalDeleteUser';
 import { useState, useEffect } from 'react';
 import { convertDataCellarToken, getBalance, getGasBalance } from '../hooks/useMMbalance'
 import { validateInteger } from "../hooks/utils";
 import { useMetaMask } from '../hooks/useMetaMask'
-
 
 function ProfileBalance(props) {
 
@@ -15,7 +11,7 @@ function ProfileBalance(props) {
 
   const [token, setToken] = useState();
   const [eth, setEth] = useState();
-  const [value, setValue]= useState();
+  const [value, setValue] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,11 +25,8 @@ function ProfileBalance(props) {
       }
     }
     fetchData();
-
     return () => { };
   }, [wallet, setErrorMessage]);
-
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -49,12 +42,11 @@ function ProfileBalance(props) {
       } else {
         setErrorMessage("Not enough Ether in your account.");
       }
-      } else {
-        setErrorMessage("Invalid input: Please enter a number less than or equal to your Ether");
-      }
-      setIsConnecting(false)
+    } else {
+      setErrorMessage("Invalid input: Please enter a number less than or equal to your Ether");
     }
-  
+    setIsConnecting(false)
+  }
 
   return (
     <Container>
@@ -77,11 +69,11 @@ function ProfileBalance(props) {
       <Row className="mt-5 mx-2">
         <Col md={12}>
           <Form onSubmit={handleSubmit}>
-            <Row> 
-            <Form.Group >
-              <Form.Label><h4 className="inline "> Do you want to convert new ETH to DataCellar tokens?</h4></Form.Label>
-              <Form.Control type="value" placeholder="Insert Value" className="value-form mx-4" required value={value} onChange={ev => setValue(ev.target.value)}/>
-            </Form.Group>
+            <Row>
+              <Form.Group >
+                <Form.Label><h4 className="inline "> Do you want to convert new ETH to DataCellar tokens?</h4></Form.Label>
+                <Form.Control type="value" placeholder="Insert Value" className="value-form mx-4" required value={value} onChange={ev => setValue(ev.target.value)} />
+              </Form.Group>
             </Row>
             <Row className='box-center mb-3 pb-2 mt-2'>
               <Button className="signup-btn mt-5" disabled={isConnecting} type="submit" >

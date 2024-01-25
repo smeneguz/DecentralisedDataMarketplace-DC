@@ -41,7 +41,6 @@
 }
 
 .logo {
-
   width: auto;
   height: auto;
   display: block;
@@ -79,7 +78,7 @@
   flex-direction: row;
 }
 
-.delete{
+.delete {
   height: fit-content !important;
   padding-top: 20px !important;
   padding-bottom: 20px !important;
@@ -132,14 +131,14 @@
   padding-left: 0px !important;
 }
 
-.h4-profile{
+.h4-profile {
   width: fit-content !important;
   margin-bottom: 0px !important;
   margin-top: 3px !important;
 }
 
-.h5-profile{
-  border: 3px solid #00C992 ;
+.h5-profile {
+  border: 3px solid #00C992;
   background-color: #F5F5F5;
   border-radius: 12px;
   padding-top: 6px;
@@ -251,7 +250,7 @@ button {
   margin-top: 5px !important;
 }
 
-.nav-box3{
+.nav-box3 {
   background-color: white !important;
   border: 1px solid #00CE95 !important;
   border-radius: 24px !important;
@@ -334,20 +333,19 @@ button {
   width: fit-content !important;
 }
 
-.profile-img{
+.profile-img {
   width: 200px;
   height: 200px;
 }
 
-.profile{
+.profile {
   width: 100%;
   position: absolute;
   left: 0;
   top: 0
 }
 
-
-.profile-sidebar{
+.profile-sidebar {
   border-right: 4px solid #00C992;
   display: flex;
   align-items: center;
@@ -356,7 +354,7 @@ button {
   height: 100vh;
 }
 
-.side-bar-button{
+.side-bar-button {
   border-bottom: 2px solid #00C992;
   width: 100%;
   display: flex;
@@ -367,7 +365,7 @@ button {
   padding-bottom: 14px;
 }
 
-.side-bar-text{
+.side-bar-text {
   margin-bottom: 0px;
   padding-top: 8px;
   padding-bottom: 10px;
@@ -375,13 +373,13 @@ button {
   cursor: pointer;
 }
 
-.side-bar-text:hover{
+.side-bar-text:hover {
   background-color: #00C992;
   color: white;
   font-weight: bold;
 }
 
-.side-bar-text-active{
+.side-bar-text-active {
   margin-bottom: 0px;
   padding-top: 8px;
   padding-bottom: 10px;
@@ -396,7 +394,7 @@ button {
   border: 4px solid #00C992;
   border-radius: 12px;
   min-width: 260px;
-  background-color: #F5F5F5 ;
+  background-color: #F5F5F5;
 }
 
 .inline {
@@ -408,7 +406,7 @@ button {
   padding-left: 0px !important;
 }
 
-.value-form{
+.value-form {
   display: inline !important;
   width: fit-content !important;
   margin-bottom: 0rem !important;
@@ -419,7 +417,7 @@ button {
   background-color: #F5F5F5 !important;
 }
 
-.value-form2{
+.value-form2 {
   display: inline !important;
   width: fit-content !important;
   margin-bottom: 0rem !important;
@@ -430,7 +428,7 @@ button {
   background-color: #F5F5F5 !important;
 }
 
-.value-form3{
+.value-form3 {
   display: inline !important;
   margin-bottom: 0rem !important;
   vertical-align: middle;
@@ -439,33 +437,33 @@ button {
   background-color: #F5F5F5 !important;
 }
 
-.table-value{
+.table-value {
   font-size: 14px !important;
 
 }
 
-.table-border{
+.table-border {
   border: 2px solid #00C992 !important;
 }
 
-.table-header{
+.table-header {
   background-color: #00CE95 !important;
   padding-left: 10px !important;
 }
 
-.uri{
-  cursor:pointer;
+.uri {
+  cursor: pointer;
   margin-bottom: 0px;
-  color:#0B5ED7;
+  color: #0B5ED7;
   text-decoration: underline;
 }
 
-.table-container{
+.table-container {
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
 
-.back{
+.back {
   width: 100px !important;
   height: fit-content !important;
   padding-left: 10px !important;
@@ -482,31 +480,31 @@ button {
   padding: 5px 0px 0px 5px !important;
 }
 
-.inline2{
+.inline2 {
   width: fit-content !important;
   margin-bottom: 0px;
 }
 
-.inline3{
+.inline3 {
   width: fit-content !important;
   padding-left: 0px !important;
   margin-bottom: 5px !important;
 }
 
-.inline-box{
+.inline-box {
   display: flex !important;
   align-items: center !important;
   flex-wrap: wrap;
 }
 
-.switch-btn{
+.switch-btn {
   width: fit-content !important;
   border: 2px solid #00C992 !important;
   background-color: #F5F5F5 !important;
   color: black !important;
 }
 
-.switch-btn-active{
+.switch-btn-active {
   width: fit-content !important;
   border: 2px solid #00C992 !important;
   background-color: #00C992 !important;
@@ -514,19 +512,19 @@ button {
   font-weight: bold !important;
 }
 
-.switch-btn1{
-  border-radius: 12px 0px 0px 12px !important ;
+.switch-btn1 {
+  border-radius: 12px 0px 0px 12px !important;
 }
 
-.switch-btn2{
-  border-radius: 0px 12px 12px 0px !important ;
+.switch-btn2 {
+  border-radius: 0px 12px 12px 0px !important;
 }
 
-.subtitle{
+.subtitle {
   font-weight: bold;
 }
 
-.market-line{
+.market-line {
   border: 3px solid #00C992;
   border-radius: 12px;
   background-color: white;
@@ -537,13 +535,23 @@ button {
   padding-bottom: 5px;
 }
 
-.buy-btn{
-  border-color: #00C992 !important;
+.buy-btn {
   border-radius: 20px !important;
-  background-color: #00C992 !important;
   padding-left: 20px !important;
   padding-right: 20px !important;
   font-weight: bold !important;
   margin-top: 2px !important;
   margin-bottom: 2px !important;
+}
+
+.use-btn {
+  border-radius: 20px !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+  font-weight: bold !important;
+  margin-top: 2px !important;
+  margin-bottom: 2px !important;
+  width: 110px !important;
 }

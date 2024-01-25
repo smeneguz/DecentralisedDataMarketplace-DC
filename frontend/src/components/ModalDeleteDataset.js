@@ -10,8 +10,8 @@ function DeleteDatasetModal(props) {
   const handleDelete = async () => {
     setIsConnecting(true);
     try {
-        await deleteDataset(wallet.accounts[0], props.selectedDataset);
-        props.setMessage(`The dataset saved at address ${props.selectedDataset} was deleted.`);
+      await deleteDataset(wallet.accounts[0], props.selectedDataset);
+      props.setMessage(`The dataset saved at address ${props.selectedDataset} was deleted.`);
     } catch (error) {
       setErrorMessage(`${error.message}`);
     }

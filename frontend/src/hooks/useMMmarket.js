@@ -1,4 +1,4 @@
-import web3Init from './we3.core';
+import web3Init from './web3.core';
 import template721 from '../contract/ERC721template.json';
 import template20 from '../contract/ERC20template.json';
 
@@ -24,7 +24,6 @@ export const getPublicDatasets = async (address) => {
     throw new Error(`Error getting all public datasets.`);
   }
 }
-
 
 export const getPublicLicenses = async (address, nftAddress) => {
   try {
@@ -52,25 +51,23 @@ export const getPublicLicenses = async (address, nftAddress) => {
   }
 }
 
-
 export const buyLicense = async (address, purchaseLicense) => {
   try {
-    console.log(address, purchaseLicense)
     const erc20 = new chainObj.web3.eth.Contract(template20.abi, purchaseLicense.licenseAddress)
-    const price = await erc20.methods.price().call({from: address});
-    const type = await erc20.methods.getlicenseType().call({from: address});
+    const price = await erc20.methods.price().call({ from: address });
+    const type = await erc20.methods.getlicenseType().call({ from: address });
     const erc721 = new chainObj.web3.eth.Contract(template721.abi, purchaseLicense.nftAddress)
-    const nftOwner = await erc721.methods.ownerAddress().call({from: address})  
-    if(type === "period"){     
-      await chainObj.DataCellarToken.methods.approve(await chainObj.factory721.methods.paymentManager().call({from: address}), parseInt(price)).send({from: address, gas: 50000, gasPrice: '10000000000'})
-      await erc20.methods.approve(await chainObj.factory721.methods.paymentManager().call({from: address}), 1).send({from: nftOwner, gas: 50000, gasPrice: '10000000000'})
-      await chainObj.factory721.methods.buyNFTlicensePeriod(purchaseLicense.nftAddress, purchaseLicense.licenseAddress).send({from: address, gas: 5000000, gasPrice: '10000000000'})  
+    const nftOwner = await erc721.methods.ownerAddress().call({ from: address })
+    if (type === "period") {
+      await chainObj.DataCellarToken.methods.approve(await chainObj.factory721.methods.paymentManager().call({ from: address }), parseInt(price)).send({ from: address, gas: 50000, gasPrice: '10000000000' })
+      await erc20.methods.approve(await chainObj.factory721.methods.paymentManager().call({ from: address }), 1).send({ from: nftOwner, gas: 50000, gasPrice: '10000000000' })
+      await chainObj.factory721.methods.buyNFTlicensePeriod(purchaseLicense.nftAddress, purchaseLicense.licenseAddress).send({ from: address, gas: 5000000, gasPrice: '10000000000' })
     } else {
-      const amount= parseInt(purchaseLicense.amount);
-      const totalNeed = parseInt(price) * amount;      
-      await chainObj.DataCellarToken.methods.approve(await chainObj.factory721.methods.paymentManager().call({from: address}), totalNeed).send({from: address, gas: 50000, gasPrice: '10000000000'})
-      await erc20.methods.approve(await chainObj.factory721.methods.paymentManager().call({from: address}), amount).send({from: nftOwner, gas: 50000, gasPrice: '10000000000'})
-      await chainObj.factory721.methods.buyNFTlicenseUsage(purchaseLicense.nftAddress, purchaseLicense.licenseAddress, amount).send({from: address, gas: 5000000, gasPrice: '10000000000'})
+      const amount = parseInt(purchaseLicense.amount);
+      const totalNeed = parseInt(price) * amount;
+      await chainObj.DataCellarToken.methods.approve(await chainObj.factory721.methods.paymentManager().call({ from: address }), totalNeed).send({ from: address, gas: 50000, gasPrice: '10000000000' })
+      await erc20.methods.approve(await chainObj.factory721.methods.paymentManager().call({ from: address }), amount).send({ from: nftOwner, gas: 50000, gasPrice: '10000000000' })
+      await chainObj.factory721.methods.buyNFTlicenseUsage(purchaseLicense.nftAddress, purchaseLicense.licenseAddress, amount).send({ from: address, gas: 5000000, gasPrice: '10000000000' })
     }
   } catch (err) {
     throw new Error(`Error by acquiring license.`);

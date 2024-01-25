@@ -1,15 +1,8 @@
-import { Col, Row, Container, Button, Table, Tooltip, OverlayTrigger } from "react-bootstrap";
-import { default as Logo } from "../assets/logo.png"
+import { Col, Row, Container, Button, Table } from "react-bootstrap";
 import "../App.css";
-import { default as User } from '../assets/user.svg';
-import DeleteUserModal from './ModalDeleteUser';
 import { useState, useEffect } from 'react';
 import { useMetaMask } from '../hooks/useMetaMask'
-import { default as Delete } from '../assets/delete.svg';
-import { default as Update } from '../assets/update.svg';
 import { default as Back } from '../assets/back.svg';
-import DeleteLicenseModal from "./ModalDeleteLicense";
-import UpdateLicenseModal from "./ModalUpdateLicense";
 import { getPublicLicenses } from "../hooks/useMMmarket";
 import PurchaseModal from "./ModalPurchase";
 
@@ -19,43 +12,40 @@ function MarketLicenses(props) {
   const [selectedLicense, setSelectedLicense] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  const { isConnecting, setErrorMessage, wallet, setIsConnecting } = useMetaMask();
+  const { setErrorMessage, wallet } = useMetaMask();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getPublicLicenses(wallet.accounts[0], props.nftMarketAddress);
+        const result = await getPublicLicenses(wallet.accounts[0], props.nftAddress);
         setLicenses(result);
       } catch (error) {
         setErrorMessage(`${error.message}`);
       }
     };
-
     fetchData();
-
     return () => { };
   }, [wallet.accounts, setErrorMessage]);
-
 
   return (
     <Container fluid className="mt-5 pt-5 profile home  ">
 
-    {showModal && <PurchaseModal setShowModal={setShowModal} showModal={showModal} selectedLicense={selectedLicense} setMessage={props.setMessage} nftMarketAddress={props.nftMarketAddress}/>}
-      
+      {showModal && <PurchaseModal setShowModal={setShowModal} showModal={showModal} selectedLicense={selectedLicense} setMessage={props.setMessage} nftAddress={props.nftAddress} />}
+
       <Row className='mx-5 mt-3 mb-5'>
         <Col md={3} className="mb-2">
-        <Button className="exit back " onClick={() => props.setNftMarketAddress("")}><img src={Back} alt="back" />
-          <h5 className="h5-back ">Back</h5>
-        </Button>
+          <Button className="exit back " onClick={() => props.setNftAddress("")}><img src={Back} alt="back" />
+            <h5 className="h5-back ">Back</h5>
+          </Button>
         </Col>
         <Col md={6} className="inline-box market-line mb-2">
-        <h6 className="inline2 me-3 "> Reference dataset: </h6>
-        <h6 className="inline2 subtitle"> {props.nftMarketAddress}</h6>
+          <h6 className="inline2 me-3 "> Reference dataset: </h6>
+          <h6 className="inline2 subtitle"> {props.nftAddress}</h6>
         </Col>
       </Row>
       <Row className='mx-5 inline-box mb-4'>
-        <h4 className="inline2 "> 
-          {props.authState ? "Press the BUY button and purchase licenses using your DataCellar tokens.": "Sign up and Sign in to Data Cellar in order to purchase these licenses." } </h4>
+        <h4 className="inline2 ">
+          {props.authState ? "Press the BUY button and purchase licenses using your DataCellar tokens." : "Sign up and Sign in to Data Cellar in order to purchase these licenses."} </h4>
       </Row>
       <Row className="mx-5 mt-5">
         <Table responsive striped bordered hover className="table-border" >
@@ -77,11 +67,16 @@ function MarketLicenses(props) {
                   <td className=" align-middle text-center">{license.licenseAddress}</td>
                   <td className=" align-middle text-center">{license.name}</td>
                   <td className=" align-middle text-center">{license.symbol}</td>
-                  <td className=" align-middle text-center">{license.type}</td>
-                  <td className=" align-middle text-center">{(license.period === 0) ? "—" : license.period}</td>
+                  {(license.type === "usage") ?
+                    <td colSpan={2} className=" align-middle text-center">Single Usage</td> :
+                    <td className=" align-middle text-center">{license.type}</td>
+                  }
+                  {(license.type === "usage") ? "" :
+                    <td className=" align-middle text-center">{`${license.period} months`}</td>
+                  }
                   <td className=" align-middle text-center">{license.price}</td>
                   <td className=" align-middle text-center">
-                    <Button className="buy-btn" disabled={!props.authState} onClick={() => {setShowModal(true); setSelectedLicense(license);}}> Buy Now! </Button>
+                    <Button className="buy-btn" disabled={!props.authState} onClick={() => { setShowModal(true); setSelectedLicense(license); }}> Buy Now! </Button>
                   </td>
                 </tr>
               ))

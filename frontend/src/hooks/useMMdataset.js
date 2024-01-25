@@ -1,8 +1,7 @@
-import web3Init from './we3.core';
+import web3Init from './web3.core';
 import template721 from '../contract/ERC721template.json';
 
 const chainObj = web3Init();
-
 
 export const createDataset = async (address, name, symbol, tokenURI, transferable) => {
   try {
@@ -81,7 +80,6 @@ export const updateDataset = async (address, nftAddress, updateData) => {
         }
         resolve();
       }
-
     } catch (err) {
       reject(new Error(`Error updating the dataset.`));
     }

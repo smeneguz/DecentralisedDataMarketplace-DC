@@ -2,9 +2,8 @@ import { Button, Modal, Form, Row, Col } from "react-bootstrap";
 import "../App.css";
 import { useMetaMask } from '../hooks/useMetaMask'
 import { updateLicense } from '../hooks/useMMlicense'
-import { validateSymbol, validateDatasetName, validateEthereumAddress, validateNumber } from "../hooks/utils";
-import { useState, useEffect } from 'react';
-
+import { validateSymbol, validateDatasetName, validateNumber } from "../hooks/utils";
+import { useState } from 'react';
 
 function UpdateLicenseModal(props) {
 
@@ -16,26 +15,24 @@ function UpdateLicenseModal(props) {
 
   const { isConnecting, setErrorMessage, wallet, setIsConnecting } = useMetaMask();
 
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsConnecting(true);
     if (validateDatasetName(name)) {
       if (validateSymbol(symbol)) {
-        console.log(period)
         if (validateNumber(period) || (props.selectedLicense.type !== "period")) {
           if (validateNumber(price)) {
-              try {
-                const updateDataLicense = {};
-                if (name !== props.selectedLicense.name.split('_')[1]) { updateDataLicense.name = props.selectedLicense.name.split('_')[0]+"_"+name; }
-                if (symbol !== props.selectedLicense.symbol.split('_')[1]) { updateDataLicense.symbol = props.selectedLicense.symbol.split('_')[0]+"_"+symbol; }
-                if (price !== props.selectedLicense.price) { updateDataLicense.price = price; }
-                if (period !== props.selectedLicense.period) { updateDataLicense.period = period; }
-                await updateLicense(wallet.accounts[0], props.nftAddress, props.selectedLicense.address, updateDataLicense);
-                props.setMessage(`The license has been updated. Check out the new changes in this section.`);
-              } catch (error) {
-                setErrorMessage(`${error.message}`);
-              }
+            try {
+              const updateDataLicense = {};
+              if (name !== props.selectedLicense.name.split('_')[1]) { updateDataLicense.name = props.selectedLicense.name.split('_')[0] + "_" + name; }
+              if (symbol !== props.selectedLicense.symbol.split('_')[1]) { updateDataLicense.symbol = props.selectedLicense.symbol.split('_')[0] + "_" + symbol; }
+              if (price !== props.selectedLicense.price) { updateDataLicense.price = price; }
+              if (period !== props.selectedLicense.period) { updateDataLicense.period = period; }
+              await updateLicense(wallet.accounts[0], props.nftAddress, props.selectedLicense.address, updateDataLicense);
+              props.setMessage(`The license has been updated. Check out the new changes in this section.`);
+            } catch (error) {
+              setErrorMessage(`${error.message}`);
+            }
           } else {
             setErrorMessage("Invalid price.");
           }
@@ -79,7 +76,6 @@ function UpdateLicenseModal(props) {
                   <Form.Control type="value" placeholder="Insert period" className="value-form3 " required value={period} onChange={ev => setPeriod(ev.target.value)} />
                 </Form.Group>
               </Col>
-
             }
             <Col md={2}>
               <Form.Group >

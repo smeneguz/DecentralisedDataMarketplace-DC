@@ -52,7 +52,6 @@ export const MetaMaskContextProvider = ({ children }) => {
       navigate('/');
     }
 
-
     setWallet({ accounts, chainId })
   }, [navigate])
 
@@ -86,7 +85,6 @@ export const MetaMaskContextProvider = ({ children }) => {
     const timeId = setTimeout(() => {
       clearError();
     }, 10000)
-
     return () => {
       clearTimeout(timeId)
     }
@@ -131,7 +129,6 @@ export const MetaMaskContextProvider = ({ children }) => {
       if (err.message === 'Timeout') {
         window.location.reload();
       } else {
-        console.log(err)
         setErrorMessage(`Failure to contact DataCellar's smart contract: ${err.message}`);
       }
     }
@@ -160,7 +157,6 @@ export const MetaMaskContextProvider = ({ children }) => {
       if (err.message === 'Timeout') {
         window.location.reload();
       } else {
-        console.log(err)
         setErrorMessage(`The sign up operation on DataCellar's smart contract failed.`);
         return false;
       }

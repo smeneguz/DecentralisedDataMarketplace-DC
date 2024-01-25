@@ -22,7 +22,7 @@ export const getContract = (net) => {
     case "0x5": return '0xdca7ef03e98e0dc2b855be647c39abe984fcf21b';
     case "0xaa36a7": return "0x3089fe8DAe3258eef98431BD4efe4a5C8a9d4020";
     case "0xe704": return "0x03d5003bf0e79C5F5223588F347ebA39AfbC3818";
-    case "0x539" : return "0x0F85D0FBeEbf003aF767AbA5ab8EDAC14360fDaA"; //To be changed every time
+    case "0x539": return "0x0F85D0FBeEbf003aF767AbA5ab8EDAC14360fDaA"; //To be changed every time
     default: return net;
   }
 }

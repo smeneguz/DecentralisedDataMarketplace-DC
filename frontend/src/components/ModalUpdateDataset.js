@@ -3,7 +3,7 @@ import "../App.css";
 import { useMetaMask } from '../hooks/useMetaMask'
 import { updateDataset } from '../hooks/useMMdataset'
 import { validateSymbol, validateDatasetName, validateEthereumAddress } from "../hooks/utils";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 function UpdateDatasetModal(props) {
 
