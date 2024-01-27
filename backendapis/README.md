@@ -6,30 +6,27 @@
 
 First prototype release of Data Marketplace based on DLT technology.
 In this release, only a few reduced functionalities will be present in order to begin presenting the (partial) proposed architecture, through the use of docker containers for external services, and the logic based on Blockchain through the implementation of specific smart contracts.
-The key aspect of the simulation will be the highlighting of the digitisation of energy data and their exchange between users through the purchase of one-time licences.
-Below are the functionalities that will be made available:
+The key aspect of the simulation will be the highlighting of the digitization of energy data and their exchange between users through the purchase of period and one-time licenses.
 
-- User registration to the DLT: assignment of an address (account) to the new user to enable him/her to buy and sell digital assets on the blockchain;​
-- Visualisation of datasets and associated licenses (one-time license);​
-- Upload of datasets and associated licenses (one-time license);​
-- Purchased of licenses associated to Datasets (one-time license);
-- Delete of licenses associated to Datasets and Datasets themself;
-- Visualization of Data Cellar Token balance.
+The following are the features offered by the backend in the dApp version of DataCellar:
+
+- Verification of the user's signature and generation of an access token (which will be placed in the session cookie to verify user authentication)
+- Generation of a VC (verifiable credential) demonstrating the sign up to DataCellar ​(the user must provide it in order to access the dApp)
 
 Here are the external services used through docker containers:
 
 - Ganache: Simulated Blockchain;
-- Postgres: SQL Database to store off-chain information;
-- Redis: Queueu management.
 
 ## Table of Contents
 
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Contributions](#contributions)
-- [License](#license)
+- [DLT Data Marketplace](#dlt-data-marketplace)
+  - [Table of Contents](#table-of-contents)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+  - [Project Structure](#project-structure)
+    - [Folder Structure](#folder-structure)
+    - [Environment variables](#environment-variables)
+    - [Blockchain Infrastructure](#blockchain-infrastructure)
 
 ## Requirements
 
@@ -80,27 +77,20 @@ Repeat the same command for the other installed packages.
 
 ## Installation
 
-Two sections follow, one for manual installation and one automatic through the execution of a bash script:
-
-### Manual Installation
-
-The first thing is to clone the current repository from command line:
+The first thing is to clone the repository and change the current branch to "dApp" from the command line:
 
 ```bash
-$git clone https://gitlab.com/FutureCitiesCommunities/Blockchain/data-cellar/backendapis.git
-```
-If you encounter problems during cloning, download the repository or e-mail one of the project authors.
-
-Access the project root directory in which you should find the <ins>docker-compose.yml</ins> file.  
-
-```bash
-$cd project/root/path
+git clone https://github.com/smeneguz/DataCellar.git
+cd DataCellar
+git fetch
+git checkout dApp
 ```
 
-Install all project dependencies
+Now you have to go to the "backendapis" folder and install all needed dependencies
 
 ```bash
-$npm install
+cd backendapis
+npm install
 ```
 
 Download and enable all the container through Docker
@@ -115,164 +105,59 @@ $docker ps
 
 CONTAINER ID   IMAGE                              COMMAND                  CREATED         STATUS         PORTS                    NAMES
 ef8e2ac51e4b   trufflesuite/ganache-cli:v6.12.2   "node /app/ganache-c…"   5 seconds ago   Up 3 seconds   0.0.0.0:8545->8545/tcp   blockchain-DataCellar
-83c82ab3d16e   postgres:16.0                      "docker-entrypoint.s…"   5 seconds ago   Up 3 seconds   0.0.0.0:5433->5432/tcp   postgres-DataCellar
-98f425157be4   redis:7.2.2                        "docker-entrypoint.s…"   5 seconds ago   Up 3 seconds   0.0.0.0:6379->6379/tcp   redis-DataCellar
 ```
-We are shown the list of services available locally within docker containers. In particular, we have 3 services:
+We are shown the list of services available locally within docker containers. In particular, we have 1 services:
 
 - **Ganache**: an Ethereum-based private blockchain simulation listening on local port 8545;
-- **Postgres**: the offchain database for storing user information accessible on port 5432;
-- **Redis**: the service for initialising and using queues for handling requests on the blockchain listening on port 6379.
 
-Initialize Database with following command
+Once this is done, start the server listening on port 3001:
 
 ```bash
-$npx prisma migrate dev
+npm start run
 
-
-Applying migration `20231219140333_`
-
-The following migration(s) have been applied:
-
-migrations/
-  └─ 20231219140333_/
-    └─ migration.sql
-
-Your database is now in sync with your schema.
-
-✔ Generated Prisma Client (v5.7.0) to ./src/prisma/client in 52ms
+[Nest] 3708  - 27/01/2024, 18:13:29     LOG [NestFactory] Starting Nest application...
+[Nest] 3708  - 27/01/2024, 18:13:29     LOG [InstanceLoader] JwtModule dependencies initialized +16ms
+[Nest] 3708  - 27/01/2024, 18:13:29     LOG [InstanceLoader] AppModule dependencies initialized +1ms
+[Nest] 3708  - 27/01/2024, 18:13:29     LOG [InstanceLoader] AuthModule dependencies initialized +1ms
+[Nest] 3708  - 27/01/2024, 18:13:29     LOG [RoutesResolver] AppController {/}: +70ms
+[Nest] 3708  - 27/01/2024, 18:13:29     LOG [RoutesResolver] AuthController {/auth}: +1ms
+[Nest] 3708  - 27/01/2024, 18:13:29     LOG [RouterExplorer] Mapped {/auth/signin, POST} route +7ms
+[Nest] 3708  - 27/01/2024, 18:13:29     LOG [RouterExplorer] Mapped {/auth/signup, POST} route +1ms
+[Nest] 3708  - 27/01/2024, 18:13:29     LOG [NestApplication] Nest application successfully started +4ms
 ```
 
-Now exit the repository from the command line and clone the smart contract repository (**branch main**):
-
-```bash
-$cd ..
-$git clone https://gitlab.com/FutureCitiesCommunities/Blockchain/data-cellar/smartcontracts.git
-```
-Follow the repository's instructions (installation section) for successful installation of Smart Contracts on the local private blockchain
-
-At this point the contracts are deployed on the blockchain. However, it is still necessary to upload in this repo the abi of the various contracts, otherwise we will not be able to call up and use the functions they expose. You can copy it through cmd or manually as you prefer.
-
-```bash
-$cd /root/to/smartcontracts/repo
-$cp build/contracts/ERC721template.json ../backendapis/src/utils/misc
-$cp build/contracts/ERC20template.json ../backendapis/src/utils/misc
-$cp build/contracts/FactoryERC721.json ../backendapis/src/utils/misc
-$cp build/contracts/DataCellarToken.json ../backendapis/src/utils/misc
-```
-
-Once this is done, return to the current repository path and start the server listening on port 3000:
-
-```bash
-$cd path/to/project
-$npm run start
-
-2023-10-26T13:35:27.818Z info:     Starting Nest application...
-2023-10-26T13:35:27.865Z info:     TypeOrmModule dependencies initialized
-2023-10-26T13:35:27.866Z info:     BullModule dependencies initialized
-[...]
-2023-10-26T13:35:28.009Z info:     Mapped {/public/viewAllMrktplaceData, GET} route
-2023-10-26T13:35:28.009Z info:     Mapped {/public/viewMrktDatasetLicences, GET} route
-2023-10-26T13:35:28.013Z info:     Nest application successfully started
-```
-
-Now you can navigate to [localhost:3000](http://localhost:3000/api). You will see the swagger with APIs list:
-
-<img src="./img/swagger.png" title="Swagger" align="center">
-
-### Automatic Installation
-
-It is possible to install all the dependencies and operations described above automatically using the bash script provided.
-Remember to grant rights to run and read and write information on your PC.
-
-- In **Windows**, you can do this by right-clicking on the file -> properties -> Security -> Edit... -> \[set permissions] -> Apply -> OK
-- In **Linux**, from CLI, execute this command:
-
-  ```bash
-  $chmod 777 installation.sh
-  ```
-Once the changes have been made, run the bash script
-
-```bash
-$bash installation.sh
-```
-The script should start up and begin to perform the required operations to install all the various dependencies, you will see messages during execution that will keep you updated on the overall progress. When finished, you can test the marketplace by accessing from your browser at [localhost:3000](http://localhost:3000/api).
-
-## Usage
-
-- TODO
+Now it is necessary to go to the "smartcontracts" folder and follow the instructions in the readme of that folder to be able to deploy the smart contracts to the blockchain.
 
 ## Project Structure
 
-Here we can find listed information about the project structure and organisation of the architecture.
+Here we can find listed information about the project structure and organization of the architecture.
 
 ### Folder Structure
 
     .
     ├── dist                      # Compiled files
-    ├── prisma                    # Migration file for database initialisation
+    ├── logs                      # Error logs generated
     ├── img                       # Images for README documentation
     └── src                       # Source files
         ├── auth                  # Authentication functionality
-        ├── blockchain            # Blockchain interactions functionality
-        ├── blockchain-public     # Blockchain interactions for public assets
-        ├── logger                # Logging files storage
         ├── middleware            # Middleware to enable logger
-        ├── user                  # User module 
-        ├── utils                 # Smart contracts ABI
-        ├── prisma                # Connection with database
         └──[...]
-    ├── test                    # Automated tests (empty at the moment)
-    ├── .env                   # Environment file
-    ├── docker-compose.yml     # Enable services through docker
-    ├── Dockerfile             # Creation of project image (to be tested)
-    ├── installation.sh        # Automatic installation
-    ├── LICENSE
+    ├── .env                      # Environment file
+    ├── docker-compose.yml        # Enable services through docker
+    ├── Dockerfile                # Creation of project image (to be tested)
     └── README.md
 
 It is important to remember that the project has been developed using nestJS, so we will find all the files defining the routes (i.e. modules) and services inside the src/ folder and the compiled files in the dist/ folder.
 
 ### Environment variables
 
-- `POSTGRES_PASSWORD`: Postgres password to access to database and perform operations
-- `POSTGRES_USER`: Username to access to postgres database
-- `POSTGRES_DB`: Postgres database name to store local information
-- `redisHost`: Redis docker container name
 - `JWT_SECRET`: secret string to generate JWT to protect endpoint
-- `encryption_KEY`: secret key to encrypt data before write them on database
-- `factory_ADDRESS`: Public address of FactoryERC721 contract
-- `dct_ADDRESS`: Public address of DataCellarToken contract 
-- `owner_ADDRESS`: Public address of the admin (and owner) of Data Cellar
-- `privateKEY`: Private Key of the admin
-
-
-### Marketplace Architecture
-
-
-<img src="./img/DataCellarArchitecture.png" title="DLT Architecture" align="center">
-
-
-### Back-end Infrastructure
-
-Back-end inrastructure is composed by following components:
-
-- **APIs endpoint**: This turns out to be the core component of the entire architecture as it is the conduit that enables and makes available the various functionalities of the marketplace. It is developed in Typescript language using the [NestJS](https://nestjs.com/) framework. 
-- **Database**: Built using [PostgreSQL](https://www.postgresql.org/) database. Here we will store User information identity. They are encrypted through a specific private key to prevent leakage of information in the event of database attacks.
-- **ORM (Object Relational Mapping)**: It is responsible to initialize tables on PostgreSQL to store data. We use [Prisma](https://www.prisma.io/) framework. At the moment we have only a single table, but in future we will store more off chain information and it will be important to map everything in the right way with specific tables.
-- **Queue**: We use [Redis](https://redis.io/) to initialize a queue to manage all the transactions generated by users of the platform on the Blockchain. The queue is managed by [Bull](https://www.npmjs.com/package/bull) module and it is responsible to create the transactions model to be executed on the Blockchain, in agreement with the logic written on smart contract, and the decision on the priority of the various requests in the queue. This is of essential importance to avoid congestion on the blockchain network that would lead to a high degradation of transaction execution speed.We have maximum control over the maximum number of transactions that can be running at the same time on the blockchain.
+- `OWN_ADDRESS`: Public address of the admin (and owner) of Data Cellar
+- `PRIV_KEY`: Private Key of the admin
 
 ### Blockchain Infrastructure
 
 Blockchain infrastructure is composed by following components:
 
 - **Blockchain network**: For this prototype, we do not have a real Blockchain network, but rather a component that simulates its real behaviour: [Ganache](https://trufflesuite.com/ganache/). In fact, it is a private blockchain based on Ethereum. It proves to be the best choice for developing a data marketplace that needs to enable the digitisation of data through specific logic (smart contracts).
-- **Smart contract**: It is the logic built on the Blockchain infrastructure made available. Smart contracts are written in Solidity and enable data digitisation and the exchange of resources through particular tokenomics. For further explanation follow this [link](https://gitlab.com/FutureCitiesCommunities/Blockchain/data-cellar/smartcontracts).
-
-## Contributions
-
-- Author - [Alessandro Mozzato](https://it.linkedin.com/in/alessandro-mozzato-32479420b?trk=people-guest_people_search-card), [Silvio Meneguzzo](https://www.linkedin.com/in/silvio-arras-meneguzzo-a29681127/), [Alfredo Favenza](https://www.linkedin.com/in/alfredofavenza/)
-- Company - [Fondazione LINKS](https://linksfoundation.com/)
-
-## License
-
-The Data Cellar DLT Marketplace is [MIT licensed](LICENSE).
+- **Smart contract**: It is the logic built on the Blockchain infrastructure made available. Smart contracts are written in Solidity and enable data digitisation and the exchange of resources through particular tokenomics. For further explanation follow this [link](https://github.com/smeneguz/DataCellar/tree/dApp/smartcontracts).
