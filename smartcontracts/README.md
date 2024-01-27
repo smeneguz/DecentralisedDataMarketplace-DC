@@ -6,15 +6,10 @@ Here we find Smart Contracts implementation to enable transactions throguh Block
 
 ### Getting started
 
-First, clone the repository in local:
+First, go to the "smart contracts" folder and install all necessary dependencies.
 
 ```bash
-git clone https://gitlab.com/data-cellar/marketplace.git
-```
-
-After that you can start installing all modules associated to the project (you should run the command inside the repo path):
-
-```bash
+cd smartcontracts
 npm install
 ```
 

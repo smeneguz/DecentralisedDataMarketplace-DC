@@ -1,6 +1,6 @@
 # DataCellar dApp Project
 
-This dApp version of DataCellar was born from the integration of a stand-alone SSI (Self-sovereign identity) system, based on the use of MetaMask as a secure wallet, with the DataCellar project itself.
+This dApp version of DataCellar was born from the integration of a stand-alone SSI (Self-sovereign identity) system, based on the use of MetaMask as a secure wallet, with the original backend made DataCellar project.
 
 This repository is organized into three main sub-folders, each dedicated to a specific aspect of the project. 
 
