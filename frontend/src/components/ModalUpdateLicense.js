@@ -13,7 +13,7 @@ function UpdateLicenseModal(props) {
   const [name, setName] = useState(props.selectedLicense.name.split('_')[1]);
   const [symbol, setSymbol] = useState(props.selectedLicense.symbol.split('_')[1]);
 
-  const { isConnecting, setErrorMessage, wallet, setIsConnecting } = useMetaMask();
+  const { isConnecting, setErrorMessage, wallet, setIsConnecting, nftAddress } = useMetaMask();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -28,7 +28,7 @@ function UpdateLicenseModal(props) {
               if (symbol !== props.selectedLicense.symbol.split('_')[1]) { updateDataLicense.symbol = props.selectedLicense.symbol.split('_')[0] + "_" + symbol; }
               if (price !== props.selectedLicense.price) { updateDataLicense.price = price; }
               if (period !== props.selectedLicense.period) { updateDataLicense.period = period; }
-              await updateLicense(wallet.accounts[0], props.nftAddress, props.selectedLicense.address, updateDataLicense);
+              await updateLicense(wallet.accounts[0], nftAddress, props.selectedLicense.address, updateDataLicense);
               props.setMessage(`The license has been updated. Check out the new changes in this section.`);
             } catch (error) {
               setErrorMessage(`${error.message}`);

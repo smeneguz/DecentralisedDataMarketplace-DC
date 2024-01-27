@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 function MyNavbar(props) {
 
-  const { wallet, setOpCompleted } = useMetaMask()
+  const { wallet, setOpCompleted, setNftAddress } = useMetaMask()
 
   const navigate = useNavigate();
 
@@ -43,7 +43,7 @@ function MyNavbar(props) {
   return (
     <Navbar collapseOnSelect expand="lg" fixed="top" className="nav">
       <Container fluid >
-        <Navbar.Brand type="button" onClick={() => { setOpCompleted(false); props.setNftAddress(""); navigate('/') }}>
+        <Navbar.Brand type="button" onClick={() => { setOpCompleted(false); setNftAddress(""); navigate('/') }}>
           <img src={Logo} className="logo-nav me-4" alt="logo" />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -74,7 +74,7 @@ function MyNavbar(props) {
               </Nav> :
               (props.authState && window.ethereum?.isConnected && wallet.accounts.length > 0) ?
                 <Nav className="box-center">
-                  <Button className="nav-box3 me-2" onClick={() => { props.setNftAddress(""); navigate('/profile'); }}>
+                  <Button className="nav-box3 me-2" onClick={() => { setNftAddress(""); navigate('/profile'); }}>
                     <img src={User} alt="user" /> <h6 className="h6-info ms-2"> Visit Your Profile </h6>
                   </Button>
                   <OverlayTrigger placement="bottom" delay={{ show: 250, hide: 400 }} overlay={renderTooltip4} >

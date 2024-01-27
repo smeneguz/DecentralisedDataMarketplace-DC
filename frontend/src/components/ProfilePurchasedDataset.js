@@ -10,7 +10,7 @@ function ProfilePurchasedDataset(props) {
 
   const [datasets, setDatasets] = useState([]);
 
-  const { setErrorMessage, wallet } = useMetaMask();
+  const { setErrorMessage, wallet, setNftAddress, nftAddress } = useMetaMask();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,7 +33,7 @@ function ProfilePurchasedDataset(props) {
 
   return (
     <Container>
-      {props.nftAddress ? <ProfilePurchasedLicense nftAddress={props.nftAddress} setNftAddress={props.setNftAddress} setMessage={props.setMessage} /> :
+      {nftAddress ? <ProfilePurchasedLicense setMessage={props.setMessage} /> :
         <Container className="table-container">
           <Row className='mx-2 mt-3 mb-4'>
         <h2 className='formText'> Purchased Licenses </h2>
@@ -64,7 +64,7 @@ function ProfilePurchasedDataset(props) {
                     </td>
                     <td className=" text-center">
                       <OverlayTrigger placement="bottom" delay={{ show: 250, hide: 400 }} overlay={renderTooltip3} >
-                        <img src={License} alt="license" className="select" onClick={() => props.setNftAddress(dataset.address)} />
+                        <img src={License} alt="license" className="select" onClick={() => setNftAddress(dataset.address)} />
                       </OverlayTrigger>
                     </td>
                   </tr>

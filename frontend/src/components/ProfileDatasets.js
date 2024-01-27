@@ -18,7 +18,7 @@ function ProfileDataset(props) {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const { setErrorMessage, wallet } = useMetaMask();
+  const { setErrorMessage, wallet, setNftAddress, nftAddress } = useMetaMask();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,7 +57,7 @@ function ProfileDataset(props) {
       {showUpdateModal && <UpdateDatasetModal setShowUpdateModal={setShowUpdateModal} showUpdateModal={showUpdateModal} selectedDataset={selectedDataset} setMessage={props.setMessage} />}
       {showDeleteModal && <DeleteDatasetModal setShowDeleteModal={setShowDeleteModal} showDeleteModal={showDeleteModal} selectedDataset={selectedDataset} setMessage={props.setMessage} />}
 
-      {props.nftAddress ? <ProfileLicenses nftAddress={props.nftAddress} setNftAddress={props.setNftAddress} setMessage={props.setMessage} /> :
+      {nftAddress ? <ProfileLicenses setMessage={props.setMessage} /> :
         <Container className="table-container">
           <Row className='mx-2 mt-3 mb-4'>
             <h2 className='formText'> Your Dataset and Licenses </h2>
@@ -91,7 +91,7 @@ function ProfileDataset(props) {
                       <td className="table-value text-center">{dataset.transferable ? 'Yes' : 'No'}</td>
                       {<td className=" text-center">
                         <OverlayTrigger placement="bottom" delay={{ show: 250, hide: 400 }} overlay={renderTooltip3} >
-                          <img src={License} alt="license" className="select" onClick={() => props.setNftAddress(dataset.nftAddress)} />
+                          <img src={License} alt="license" className="select" onClick={() => setNftAddress(dataset.nftAddress)} />
                         </OverlayTrigger>
                       </td>
                       }

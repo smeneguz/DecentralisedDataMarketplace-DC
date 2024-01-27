@@ -5,12 +5,12 @@ import { deleteLicense } from '../hooks/useMMlicense'
 
 function DeleteLicenseModal(props) {
 
-  const { setIsConnecting, setErrorMessage, isConnecting, wallet } = useMetaMask();
+  const { setIsConnecting, setErrorMessage, isConnecting, wallet, nftAddress } = useMetaMask();
 
   const handleDelete = async () => {
     setIsConnecting(true);
     try {
-      await deleteLicense(wallet.accounts[0], props.nftAddress, props.selectedLicense);
+      await deleteLicense(wallet.accounts[0], nftAddress, props.selectedLicense);
       props.setMessage(`The license saved at address ${props.selectedLicense} was deleted.`);
     } catch (error) {
       setErrorMessage(`${error.message}`);

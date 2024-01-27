@@ -12,12 +12,12 @@ function MarketLicenses(props) {
   const [selectedLicense, setSelectedLicense] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  const { setErrorMessage, wallet } = useMetaMask();
+  const { setErrorMessage, wallet,setNftAddress, nftAddress } = useMetaMask();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getPublicLicenses(wallet.accounts[0], props.nftAddress);
+        const result = await getPublicLicenses(wallet.accounts[0], nftAddress);
         setLicenses(result);
       } catch (error) {
         setErrorMessage(`${error.message}`);
@@ -25,22 +25,22 @@ function MarketLicenses(props) {
     };
     fetchData();
     return () => { };
-  }, [wallet.accounts, setErrorMessage]);
+  }, [wallet.accounts, setErrorMessage, nftAddress]);
 
   return (
     <Container fluid className="mt-5 pt-5 profile home  ">
 
-      {showModal && <PurchaseModal setShowModal={setShowModal} showModal={showModal} selectedLicense={selectedLicense} setMessage={props.setMessage} nftAddress={props.nftAddress} />}
+      {showModal && <PurchaseModal setShowModal={setShowModal} showModal={showModal} selectedLicense={selectedLicense} setMessage={props.setMessage}/>}
 
       <Row className='mx-5 mt-3 mb-5'>
         <Col md={3} className="mb-2">
-          <Button className="exit back " onClick={() => props.setNftAddress("")}><img src={Back} alt="back" />
+          <Button className="exit back " onClick={() => setNftAddress("")}><img src={Back} alt="back" />
             <h5 className="h5-back ">Back</h5>
           </Button>
         </Col>
         <Col md={6} className="inline-box market-line mb-2">
           <h6 className="inline2 me-3 "> Reference dataset: </h6>
-          <h6 className="inline2 subtitle"> {props.nftAddress}</h6>
+          <h6 className="inline2 subtitle"> {nftAddress}</h6>
         </Col>
       </Row>
       <Row className='mx-5 inline-box mb-4'>

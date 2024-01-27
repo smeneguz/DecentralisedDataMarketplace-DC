@@ -9,12 +9,12 @@ function ProfilePurchasedLicenses(props) {
 
   const [licenses, setLicenses] = useState([]);
 
-  const { isConnecting, setErrorMessage, wallet, setIsConnecting } = useMetaMask();
+  const { isConnecting, setErrorMessage, wallet, setIsConnecting, setNftAddress, nftAddress } = useMetaMask();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getPurchasedLicenses(wallet.accounts[0], props.nftAddress);
+        const result = await getPurchasedLicenses(wallet.accounts[0], nftAddress);
         setLicenses(result);
       } catch (error) {
         setErrorMessage(`${error.message}`);
@@ -24,12 +24,12 @@ function ProfilePurchasedLicenses(props) {
     fetchData();
 
     return () => { };
-  }, [wallet.accounts, setErrorMessage]);
+  }, [wallet.accounts, setErrorMessage, nftAddress]);
 
   const handleConsume = async (licenseAddress, licenseType) => {
     setIsConnecting(true);
     try {
-      await consumeNFT(wallet.accounts[0], props.nftAddress, licenseAddress);
+      await consumeNFT(wallet.accounts[0], nftAddress, licenseAddress);
       if (licenseType === "usage")
         props.setMessage(`You have consumed a token for your single-use license.`);
       else {
@@ -45,13 +45,13 @@ function ProfilePurchasedLicenses(props) {
   return (
     <Container className="table-container">
       <Row className='mx-2 mt-3 mb-4'>
-        <Button className="exit back" onClick={() => props.setNftAddress("")}><img src={Back} alt="back" />
+        <Button className="exit back" onClick={() => setNftAddress("")}><img src={Back} alt="back" />
           <h5 className="h5-back ">Back </h5>
         </Button>
       </Row>
       <Row className='mx-2 inline-box'>
         <h4 className="inline2"> All purchased licenses for the dataset at address: </h4>
-        <h5 className="inline2"> {props.nftAddress}</h5>
+        <h5 className="inline2"> {nftAddress}</h5>
       </Row>
       <Row className="mx-2 mt-4">
         <Table responsive striped bordered hover className="table-border" >

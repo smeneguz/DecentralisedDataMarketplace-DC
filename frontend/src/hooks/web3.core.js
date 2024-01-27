@@ -9,6 +9,7 @@ export default function web3Init() {
     const factory721 = new instance.eth.Contract(factory.abi, "0xD5D7f7bF241812A3Cc2508A2Fb177EFA4A573e5C");
     return { web3: instance, DataCellarToken, factory721 }
   } else {
-    throw new Error('MetaMask not detected. Please install MetaMask to use this feature.');
+    return false;
+    //throw new Error('MetaMask not detected. Please install MetaMask to use this feature.');
   }
 }

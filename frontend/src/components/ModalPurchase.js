@@ -9,14 +9,14 @@ function PurchaseModal(props) {
 
   const [amount, setAmount] = useState(1);
 
-  const { isConnecting, setErrorMessage, wallet, setIsConnecting } = useMetaMask();
+  const { isConnecting, setErrorMessage, wallet, setIsConnecting, nftAddress } = useMetaMask();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsConnecting(true);
     if (validateNumber(amount) || (props.selectedLicense.type === "period")) {
       try {
-        const purchaseLicense = { licenseAddress: props.selectedLicense.licenseAddress, nftAddress: props.nftAddress };
+        const purchaseLicense = { licenseAddress: props.selectedLicense.licenseAddress, nftAddress };
         if (props.selectedLicense.type !== "period") { purchaseLicense.amount = amount; }
         await buyLicense(wallet.accounts[0], purchaseLicense);
         props.setMessage(`The license has been bought. You can see this licenses in the "Purchased Licenses" section in your profile.`);
@@ -41,13 +41,13 @@ function PurchaseModal(props) {
               You are purchasing the license{' '}
               <span className="subtitle">{props.selectedLicense.name}</span>, for a period of{' '}
               <span className="subtitle">{props.selectedLicense.period} months</span>, related to the dataset stored at address{' '}
-              <span className="subtitle">{props.nftAddress}</span>, at a cost of  {' '}
+              <span className="subtitle">{nftAddress}</span>, at a cost of  {' '}
               <span className="subtitle">{props.selectedLicense.price} DataCellar </span> tokens.
             </h5> :
             <h5>
               You are purchasing the single usage license{' '}
               <span className="subtitle">{props.selectedLicense.name}</span>, related to the dataset stored at address{' '}
-              <span className="subtitle">{props.nftAddress}</span>, at a cost of  {' '}
+              <span className="subtitle">{nftAddress}</span>, at a cost of  {' '}
               <span className="subtitle">{props.selectedLicense.price} DataCellar  </span> tokens each.
             </h5>
           }

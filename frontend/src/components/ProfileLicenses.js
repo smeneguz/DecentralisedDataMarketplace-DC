@@ -16,12 +16,12 @@ function ProfileLicenses(props) {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const { setErrorMessage, wallet } = useMetaMask();
+  const { setErrorMessage, wallet, setNftAddress, nftAddress } = useMetaMask();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getOwnLicenses(wallet.accounts[0], props.nftAddress);
+        const result = await getOwnLicenses(wallet.accounts[0], nftAddress);
         setLicenses(result);
       } catch (error) {
         setErrorMessage(`${error.message}`);
@@ -29,7 +29,7 @@ function ProfileLicenses(props) {
     };
     fetchData();
     return () => { };
-  }, [wallet.accounts, setErrorMessage]);
+  }, [wallet.accounts, setErrorMessage, nftAddress]);
 
   const renderTooltip1 = (props) => (
     <Tooltip className="ind" id="button-tooltip" {...props}>
@@ -46,17 +46,17 @@ function ProfileLicenses(props) {
   return (
     <Container className="table-container">
 
-      {showUpdateModal && <UpdateLicenseModal setShowUpdateModal={setShowUpdateModal} showUpdateModal={showUpdateModal} selectedLicense={selectedLicense} setMessage={props.setMessage} nftAddress={props.nftAddress} />}
-      {showDeleteModal && <DeleteLicenseModal setShowDeleteModal={setShowDeleteModal} showDeleteModal={showDeleteModal} selectedLicense={selectedLicense} setMessage={props.setMessage} nftAddress={props.nftAddress} />}
+      {showUpdateModal && <UpdateLicenseModal setShowUpdateModal={setShowUpdateModal} showUpdateModal={showUpdateModal} selectedLicense={selectedLicense} setMessage={props.setMessage} />}
+      {showDeleteModal && <DeleteLicenseModal setShowDeleteModal={setShowDeleteModal} showDeleteModal={showDeleteModal} selectedLicense={selectedLicense} setMessage={props.setMessage} />}
 
       <Row className='mx-2 mt-3 mb-4'>
-        <Button className="exit back" onClick={() => props.setNftAddress("")}><img src={Back} alt="back" />
+        <Button className="exit back" onClick={() => setNftAddress("")}><img src={Back} alt="back" />
           <h5 className="h5-back ">Back </h5>
         </Button>
       </Row>
       <Row className='mx-2 inline-box'>
         <h4 className="inline2"> All your licenses associated with dataset at address: </h4>
-        <h5 className="inline2"> {props.nftAddress}</h5>
+        <h5 className="inline2"> {nftAddress}</h5>
       </Row>
       <Row className="mx-2 mt-4">
         <Table responsive striped bordered hover className="table-border" >

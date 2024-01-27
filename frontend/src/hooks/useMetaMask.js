@@ -19,6 +19,7 @@ export const MetaMaskContextProvider = ({ children }) => {
   const [errorMessage, setErrorMessage] = useState('')
   const [wallet, setWallet] = useState(disconnectedState)
   const [authState, setAuthState] = useState();
+  const [nftAddress, setNftAddress] = useState("");
 
   const clearError = () => setErrorMessage('')
 
@@ -39,6 +40,7 @@ export const MetaMaskContextProvider = ({ children }) => {
       if (publicAddress !== accounts[0]) {
         document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         setAuthState(undefined);
+        setNftAddress("");
         navigate('/');
       }
     }
@@ -49,6 +51,7 @@ export const MetaMaskContextProvider = ({ children }) => {
     if (chainId !== "0x539") {
       document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
       setAuthState(undefined);
+      setNftAddress("");
       navigate('/');
     }
 
@@ -239,7 +242,9 @@ export const MetaMaskContextProvider = ({ children }) => {
         unregisterDataCellar,
         setWallet,
         authState,
-        setAuthState
+        setAuthState,
+        setNftAddress,
+        nftAddress
       }}
     >
       {children}

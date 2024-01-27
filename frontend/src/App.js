@@ -31,10 +31,9 @@ function App2() {
   const [vc, setVc] = useState("");
   const [profilePage, setProfilePage] = useState(1);
   const [message, setMessage] = useState("");
-  const [nftAddress, setNftAddress] = useState("");
   const [createType, setCreateType] = useState(1);
 
-  const { wallet, error, errorMessage, clearError, setOpCompleted, authState, setAuthState } = useMetaMask();
+  const { wallet, error, errorMessage, clearError, setOpCompleted, authState, setAuthState, setNftAddress } = useMetaMask();
 
   useEffect(() => {
     const timeId = setTimeout(() => {
@@ -54,10 +53,10 @@ function App2() {
       const { publicAddress, name, surname, email, profession, country, region } = jwtDecode(authToken);
       setAuthState({ publicAddress, name, surname, email, profession, country, region });
     }
-  }, []);
+  }, [setAuthState]);
 
   const handleLoggedIn = (auth, publicAddress, credentials) => {
-    document.cookie = `authToken=${JSON.stringify(auth)}; path=/; samesite=None; secure`;
+    document.cookie = `authToken=${JSON.stringify(auth)}; path=/; SameSite=None; secure`;
     const name = credentials.name;
     const surname = credentials.surname;
     const email = credentials.email;
@@ -84,7 +83,7 @@ function App2() {
   function Layout() {
     return (
       <>
-        <MyNavbar setShowExit={setShowExit} authState={authState} setNftAddress={setNftAddress} />
+        <MyNavbar setShowExit={setShowExit} authState={authState} />
         <Container className="box-center" >
           {error &&
             <Alert variant="danger" className="err-alert" onClose={clearError} dismissible >
@@ -110,11 +109,11 @@ function App2() {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={(wallet.accounts.length > 0 && window.ethereum?.isConnected) ?
-          <MarketDatasets nftAddress={nftAddress} setNftAddress={setNftAddress} authState={authState} setMessage={setMessage} /> :
+          <MarketDatasets authState={authState} setMessage={setMessage} handleLoggedOut={handleLoggedOut} /> :
           <Login />} />
         <Route path="signin" element={<Signin handleLoggedIn={handleLoggedIn} />} />
         <Route path="signup" element={<Signup handleVcCreation={handleVcCreation} vc={vc} setVc={setVc} />} />
-        <Route path="profile" element={<Profile authState={authState} handleLoggedOut={handleLoggedOut} profilePage={profilePage} setProfilePage={setProfilePage} setMessage={setMessage} setNftAddress={setNftAddress} nftAddress={nftAddress} setCreateType={setCreateType} createType={createType} />} />
+        <Route path="profile" element={<Profile authState={authState} handleLoggedOut={handleLoggedOut} profilePage={profilePage} setProfilePage={setProfilePage} setMessage={setMessage} setCreateType={setCreateType} createType={createType} />} />
       </Route>
     </Routes>
 
