@@ -1,8 +1,17 @@
+<a href="https://datacellarproject.eu/">
+  <img src="./img/logo/Logo.png" title="DATA CELLAR" height="60" align="right">
+</a>
+
 # DataCellar dApp Project
 
 This dApp version of DataCellar was born from the integration of a stand-alone SSI (Self-sovereign identity) system, based on the use of MetaMask as a secure wallet, with the original backend made DataCellar project.
 
+The previous release contained a set of reduced features to start presenting the architecture, through the use of docker containers for external services, and Blockchain-based logic through the implementation of specific smart contracts.
+
+The key aspect of the simulation is to highlight the process of digitization of energy data and its exchange between users through the purchase of periodic and one-time licenses.
+
 This repository is organized into three main sub-folders, each dedicated to a specific aspect of the project. 
+
 
 ## Folder Overview
 ### 1. BackendAPIs
@@ -20,6 +29,55 @@ For detailed information on configuring the fronted environment, please read the
 ### 3. SmartContracts
 
 The `smartcontracts` folder is dedicated to the blockchain part of the DataCellar project. Here, you will find the smart contracts and related resources for integrating blockchain functionality. If you are involved in blockchain development or smart contract deployment, refer to the [SmartContracts README](smartcontracts/README.md) for comprehensive information on setting up the blockchain environment, deploying smart contracts, and other blockchain-specific details.
+
+
+## Requirements
+
+System requirements:
+
+- **Operating System**: Windows 10/11, Linux Ubuntu distribution 20.04/22.04 LTS. 
+<span style="color: red;">It has not been tested on MacOS. It might work but we do not guarantee</span>;
+- **Memory**: at least 4 GB of RAM;
+- **Processor**: 64 bit, Intel Core i5 or more;
+
+Software packages requirements:
+
+<table>
+  <tr style="background-color: lightgreen;">
+    <td align="center">Packages</td>
+    <td align="center">Installation guide</td>
+  </tr>
+  <tr>
+    <td><b>NodeJS</b>: v18.17.*</td>
+    <td rowspan="2" align="center">We suggest nvm (Node Version Manager)<p></p>[Windows](https://github.com/coreybutler/nvm-windows) | [Linux](https://gist.github.com/d2s/372b5943bce17b964a79)</td>
+  </tr>
+  <tr>
+    <td><b>npm</b>: v9.6.*</td>
+  </tr>
+  <tr>
+    <td><b>Docker</b>: v24</td>
+    <td align="center">[Windows](https://docs.docker.com/desktop/install/windows-install/) | [Linux](https://docs.docker.com/engine/install/ubuntu/)</td>
+  </tr>
+  <tr>
+    <td><b>docker-compose</b>: v2.21</td>
+    <td align="center">[Linux](https://docs.docker.com/compose/install/linux/)</td>
+  </tr>
+  <tr>
+    <td><b>git</b>: v2.41</td>
+    <td align="center"> [Windows](https://git-scm.com/book/it/v2/Per-Iniziare-Installing-Git) | [Linux](https://git-scm.com/book/it/v2/Per-Iniziare-Installing-Git)</td>
+  </tr>
+</table>
+
+The versions of the packages are those that are used to build the system and on which one is certain to function correctly. This doesn't exclude that older or later versions may work.
+
+To verify the correct installation of all packages, write the following commands from the CLI:
+
+```bash
+$node --versions
+v18.17.1
+```
+Repeat the same command for the other installed packages.
+
 
 ## Contributions
 
