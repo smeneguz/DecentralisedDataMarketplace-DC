@@ -34,7 +34,7 @@ The following are all the features offered by the frontend, through functions, w
   - [Project Structure](#project-structure)
     - [Folder Structure](#folder-structure)
     - [React Components](#react-components)
-    - [Hooks APIs](#hooks-apis)
+    - [Hooks functions](#hooks-functions)
   - [Libraries Used](#libraries-used)
 
 
@@ -120,7 +120,7 @@ It is important to remember that the project has been developed using React, Jav
         ├── Signup.js                     # Sign up page to register as member 
         └──[...]
 
-### Hooks APIs
+### Hooks functions
 
     .
     └── hooks                             # Application's functionality and APIs 
