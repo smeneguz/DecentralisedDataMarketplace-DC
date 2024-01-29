@@ -6,7 +6,7 @@ Here we find Smart Contracts implementation to enable transactions throguh Block
 
 ### Getting started
 
-First, go to the "smart contracts" folder and install all necessary dependencies.
+Navigate to the "smartcontracts" folder and install all needed dependencies:
 
 ```bash
 cd smartcontracts
@@ -19,4 +19,4 @@ If the installation of the packages is successful, the smart contracts can now b
 npx truffle migrate
 ```
 
-Now your smart contracts are deployed on the chain and you can start interact with them
+Now your smart contracts are deployed on the chain and you need to go to the "frontend" folder and follow the instructions in the readme of that folder to be able to use the dApp and contact smart contracts in the blockchain.

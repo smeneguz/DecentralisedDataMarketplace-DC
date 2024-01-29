@@ -13,6 +13,20 @@ The key aspect of the simulation is to highlight the process of digitization of 
 This repository is organized into three main sub-folders, each dedicated to a specific aspect of the project. 
 
 
+## Table of Contents
+
+- [DataCellar dApp Project](#datacellar-dapp-project)
+  - [Table of Contents](#table-of-contents)
+  - [Folder Overview](#folder-overview)
+    - [1. BackendAPIs](#1-backendapis)
+    - [2. Frontend](#2-frontend)
+    - [3. SmartContracts](#3-smartcontracts)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+  - [Contributions](#contributions)
+  - [License](#license)
+
+
 ## Folder Overview
 ### 1. BackendAPIs
 
@@ -77,6 +91,20 @@ $node --versions
 v18.17.1
 ```
 Repeat the same command for the other installed packages.
+
+
+## Installation
+
+The first thing is to clone the repository and change the current branch to "dApp" from the command line:
+
+```bash
+git clone https://github.com/smeneguz/DataCellar.git
+cd DataCellar
+git fetch
+git checkout dApp
+```
+
+Now it is necessary to go to the "backendapis" folder and follow the instructions in the readme of that folder to be able to run the docker and the server.
 
 
 ## Contributions

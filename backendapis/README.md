@@ -24,16 +24,7 @@ Here are the external services used through docker containers:
 
 ## Installation
 
-The first thing is to clone the repository and change the current branch to "dApp" from the command line:
-
-```bash
-git clone https://github.com/smeneguz/DataCellar.git
-cd DataCellar
-git fetch
-git checkout dApp
-```
-
-Now you have to go to the "backendapis" folder and install all needed dependencies
+Navigate to the "backendapis" folder and install all needed dependencies:
 
 ```bash
 cd backendapis
@@ -95,7 +86,7 @@ Here we can find listed information about the project structure and organization
     ├── Dockerfile                # Creation of project image (to be tested)
     └── README.md
 
-It is important to remember that the project has been developed using nestJS, so we will find all the files defining the routes (i.e. modules) and services inside the src/ folder and the compiled files in the dist/ folder.
+It is important to remember that the backend has been developed using nestJS, so we will find all the files defining the routes (i.e. modules) and services inside the src/ folder and the compiled files in the dist/ folder.
 
 ### Environment variables
 
