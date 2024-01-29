@@ -11,7 +11,7 @@ function MarketDatasets(props) {
 
   const [datasets, setDatasets] = useState([]);
 
-  const { setErrorMessage, wallet, setNftAddress, nftAddress } = useMetaMask();
+  const { setErrorMessage, wallet, setNftAddress, nftAddress, wrongNetwork } = useMetaMask();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,7 +19,11 @@ function MarketDatasets(props) {
         const result = await getPublicDatasets(wallet.accounts[0]);
         setDatasets(result);
       } catch (error) {
-        setErrorMessage(`${error.message}`);
+        if (wrongNetwork) {
+          setErrorMessage(`This network is not available at the moment. Please, change your network to Ganache.`);
+        } else {
+          setErrorMessage(`${error.message}`);
+        }
       }
     };
     fetchData();
