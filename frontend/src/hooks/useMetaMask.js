@@ -2,11 +2,11 @@ import { useState, useEffect, createContext, useContext, useCallback } from 'rea
 import detectEthereumProvider from '@metamask/detect-provider'
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
+import DataCellarRegistry from '../contract/DataCellarRegistry.json';
 
 const disconnectedState = { accounts: [], chainId: '' }
 const MetaMaskContext = createContext({})
 const ethers = require("ethers");
-const contractAbi = require('../contract/DataCellarRegistryABI');
 const contractAddress = "0x0dcA40e694DCcdBA2DFBB8ee16Bf68265f2Ffc3b";
 
 export const MetaMaskContextProvider = ({ children }) => {
@@ -127,7 +127,7 @@ export const MetaMaskContextProvider = ({ children }) => {
       if (!signer) {
         throw new Error('Timeout');
       }
-      const dataCellarRegistry = new ethers.Contract(contractAddress, contractAbi, signer);
+      const dataCellarRegistry = new ethers.Contract(contractAddress, DataCellarRegistry.abi, signer);
       const isUserRegistered = await dataCellarRegistry.isUserRegistered(wallet.accounts[0]);
       return isUserRegistered;
     } catch (err) {
@@ -147,7 +147,7 @@ export const MetaMaskContextProvider = ({ children }) => {
       if (!signer) {
         throw new Error('Timeout');
       }
-      const dataCellarRegistry = new ethers.Contract(contractAddress, contractAbi, signer);
+      const dataCellarRegistry = new ethers.Contract(contractAddress, DataCellarRegistry.abi, signer);
       const registeredCheck = await isRegistered();
       if (!registeredCheck) {
         const tx = await dataCellarRegistry.registerUser(wallet.accounts[0]);
@@ -162,6 +162,7 @@ export const MetaMaskContextProvider = ({ children }) => {
       if (err.message === 'Timeout') {
         window.location.reload();
       } else {
+        console.log(err.message )
         setErrorMessage(`The sign up operation on DataCellar's smart contract failed.`);
         return false;
       }
@@ -203,7 +204,7 @@ export const MetaMaskContextProvider = ({ children }) => {
       if (!signer) {
         throw new Error('Timeout');
       }
-      const dataCellarRegistry = new ethers.Contract(contractAddress, contractAbi, signer);
+      const dataCellarRegistry = new ethers.Contract(contractAddress, DataCellarRegistry.abi, signer);
       const registeredCheck = await isRegistered();
       if (registeredCheck) {
         const tx = await dataCellarRegistry.unregisterUser(wallet.accounts[0]);
