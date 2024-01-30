@@ -11,7 +11,7 @@ export const getPurchasedDatasets = async (address) => {
     for (let i = 0; i < erc721arr.length; i++) {
       const erc721template = new chainObj.web3.eth.Contract(template721.abi, erc721arr[i]);
       const owner = await erc721template.methods.ownerAddress().call({ from: address });
-      if (owner == address) { continue; }
+      if (owner.toLowerCase() === address.toLowerCase()) { continue; }
       const name = await erc721template.methods.name().call({ from: address });
       const symbol = await erc721template.methods.symbol().call({ from: address });
       const tokenURI = await erc721template.methods.getTokenUri().call({ from: address });
@@ -21,7 +21,7 @@ export const getPurchasedDatasets = async (address) => {
         const balance = await erc20template.methods.balanceOf(address).call({ from: address });
         if (balance > 0) { return true; }
       }))
-      const dataTokenFiltered = dataToken.filter((datatoken) => datatoken != undefined);
+      const dataTokenFiltered = dataToken.filter((datatoken) => datatoken !== undefined);
       if (dataTokenFiltered.length > 0) {
         nft_DataLicenses.push({ name, symbol, tokenURI, address: erc721arr[i] })
       }
@@ -36,7 +36,7 @@ export const getPurchasedLicenses = async (address, nftAddress) => {
   return new Promise(async (resolve, reject) => {
     try {
       const erc721arr = await chainObj.factory721.methods.geterc721array().call({ from: address })
-      if (erc721arr.indexOf(nftAddress) == -1) {
+      if (erc721arr.indexOf(nftAddress) === -1) {
         reject(new Error('The nftAddress provided is not a valid address.'));
       }
       const erc20arr = await chainObj.factory721.methods.geterc20array(nftAddress).call({ from: address });
@@ -47,7 +47,7 @@ export const getPurchasedLicenses = async (address, nftAddress) => {
           const name = await erc20template.methods.name().call({ from: address });
           const symbol = await erc20template.methods.symbol().call({ from: address });
           const type = await erc20template.methods.getlicenseType().call({ from: address });
-          if (type == "period") {
+          if (type === "period") {
             const periodMonth = await erc20template.methods.getLicensePeriod().call({ from: address });
             const periodInt = parseInt(periodMonth);
             const startLicense = await erc20template.methods.getStartLicenseDate(address).call({ from: address });
@@ -61,7 +61,7 @@ export const getPurchasedLicenses = async (address, nftAddress) => {
           return { name, symbol, type, balance: parseInt(balance), address: erc20 }
         }
       }));
-      const dataTokenFiltered = dataToken.filter((datatoken) => datatoken != undefined)
+      const dataTokenFiltered = dataToken.filter((datatoken) => datatoken !== undefined)
       resolve(dataTokenFiltered);
     } catch (err) {
       reject(new Error(`Error getting purchased licenses.`));
@@ -76,10 +76,10 @@ export const consumeNFT = async (address, nftAddress, licenseAddress) => {
     const owner = await erc721.methods.ownerAddress().call({ from: address });
     const allowanceOwner = await erc20.methods.allowance(owner, nftAddress).call({ from: address });
     const allowanceConsumer = await erc20.methods.allowance(address, nftAddress).call({ from: address });
-    if (allowanceConsumer == 0) {
+    if (allowanceConsumer === 0) {
       await erc20.methods.approve(nftAddress, 1).send({ from: address, gas: 5000000, gasPrice: '10000000000' })
     }
-    if (allowanceOwner == 0) {
+    if (allowanceOwner === 0) {
       await erc20.methods.approve(nftAddress, 1).send({ from: owner, gas: 5000000, gasPrice: '10000000000' })
     }
     await erc721.methods.requestConsumeNFT(licenseAddress).send({ from: address, gas: 5000000, gasPrice: '10000000000' })

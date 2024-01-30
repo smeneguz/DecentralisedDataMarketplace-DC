@@ -4,6 +4,7 @@ import { useMetaMask } from '../hooks/useMetaMask'
 import { validateNumber } from "../hooks/utils";
 import { useState } from 'react';
 import { buyLicense } from "../hooks/useMMmarket";
+import { getBalance } from "../hooks/useMMbalance";
 
 function PurchaseModal(props) {
 
@@ -16,10 +17,15 @@ function PurchaseModal(props) {
     setIsConnecting(true);
     if (validateNumber(amount) || (props.selectedLicense.type === "period")) {
       try {
-        const purchaseLicense = { licenseAddress: props.selectedLicense.licenseAddress, nftAddress };
-        if (props.selectedLicense.type !== "period") { purchaseLicense.amount = amount; }
-        await buyLicense(wallet.accounts[0], purchaseLicense);
-        props.setMessage(`The license has been bought. You can see this licenses in the "Purchased Licenses" section in your profile.`);
+        const balance = await getBalance(wallet.accounts[0]);
+        if (balance >= props.selectedLicense.price) {
+          const purchaseLicense = { licenseAddress: props.selectedLicense.licenseAddress, nftAddress };
+          if (props.selectedLicense.type !== "period") { purchaseLicense.amount = amount; }
+          await buyLicense(wallet.accounts[0], purchaseLicense);
+          props.setMessage(`The license has been bought. You can see this licenses in the "Purchased Licenses" section in your profile.`);
+        } else {
+          setErrorMessage(`You do not have enough DataCellar tokens to make this purchase.`);
+        }
       } catch (error) {
         setErrorMessage(`${error.message}`);
       }

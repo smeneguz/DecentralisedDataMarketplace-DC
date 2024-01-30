@@ -237,7 +237,7 @@ contract ERC721template is
             keccak256(abi.encodePacked(("usage")))
         ) {
             //at the moment we are saying the usage is happening now, but it will happen next
-            license.transferFrom(msg.sender, address(0), 1);
+            license.transferFrom(msg.sender, _owner, 1);
             emit nftConsumedUsage(
                 true,
                 address(this),
@@ -259,7 +259,7 @@ contract ERC721template is
                 return true;
             } else {
                 //bruciamo il datatoken. non trasferiamo al proprietario
-                license.transferFrom(msg.sender, address(0), 1);
+                license.transferFrom(msg.sender, _owner, 1);
                 emit nftConsumedPeriod(
                     false,
                     address(this),

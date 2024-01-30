@@ -72,11 +72,14 @@ function ProfileBalance(props) {
             <Row>
               <Form.Group >
                 <Form.Label><h4 className="inline "> Do you want to convert new ETH to DataCellar tokens?</h4></Form.Label>
-                <Form.Control type="value" placeholder="Insert Value" className="value-form mx-4" required value={value} onChange={ev => setValue(ev.target.value)} />
+                <Form.Control type="value" placeholder="Insert ETH amount" className="value-form mx-4" required value={value} onChange={ev => setValue(ev.target.value)} />
               </Form.Group>
             </Row>
-            <Row className='box-center mb-3 pb-2 mt-2'>
-              <Button className="signup-btn mt-5" disabled={isConnecting} type="submit" >
+            <Row>
+              <h5 className="mt-4"> The price of a single DataCellar token is 0.0005 ETH, at the moment. </h5>
+            </Row>
+            <Row className='box-center mb-3 pb-2 '>
+              <Button className="signup-btn mt-4" disabled={isConnecting} type="submit" >
                 {isConnecting ? "Loading" : "Convert Token"}
               </Button>
             </Row>

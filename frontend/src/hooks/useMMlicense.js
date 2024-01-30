@@ -45,7 +45,7 @@ export const getOwnLicenses = async (address, nftAddress) => {
     try {
       const erc721contract = new chainObj.web3.eth.Contract(template721.abi, nftAddress);
       const owner = await erc721contract.methods.ownerAddress().call();
-      if (owner.toLowerCase() != address.toLowerCase()) {
+      if (owner.toLowerCase() !== address.toLowerCase()) {
         reject(Error("You are not the owner of the dataset"));
       } else {
         const licensesList = await chainObj.factory721.methods.geterc20array(nftAddress).call({ from: address });
@@ -56,7 +56,7 @@ export const getOwnLicenses = async (address, nftAddress) => {
           const type = await erc20template.methods.getlicenseType().call({ from: address });
           const price = await erc20template.methods.price().call({ from: address });
           const priceInt = parseInt(price, 10);
-          if (type == "period") {
+          if (type === "period") {
             const periodMonth = await erc20template.methods.getLicensePeriod().call({ from: address });
             const periodInt = parseInt(periodMonth, 10);
             return { address: erc20, name, symbol, type, period: periodInt, price: priceInt }
@@ -80,7 +80,7 @@ export const deleteLicense = async (address, nftAddress, licenseAddress) => {
     try {
       const erc721 = new chainObj.web3.eth.Contract(template721.abi, nftAddress)
       const existLicense = await erc721.methods.isDeployed(licenseAddress).call({ from: address });
-      if (existLicense == false) {
+      if (existLicense === false) {
         reject(new Error("License address doesn't match with nft address"));
       } else {
         const erc20 = new chainObj.web3.eth.Contract(template20.abi, licenseAddress);
@@ -88,18 +88,14 @@ export const deleteLicense = async (address, nftAddress, licenseAddress) => {
         let erc20ArrayFromFactory = await chainObj.factory721.methods.geterc20array(nftAddress).call({ from: address });
         const indexFromFactory = erc20ArrayFromFactory.indexOf(licenseAddress);
         const indexFrom721Template = erc20ArrayFrom721Template.indexOf(licenseAddress);
-        if (indexFromFactory == -1 || indexFrom721Template == -1) {
+        if (indexFromFactory === -1 || indexFrom721Template === -1) {
           reject(new Error("License not found."));
         } else {
           const newErc20ArrayFrom721Template = erc20ArrayFrom721Template.filter((item, i) => {
-            if (i !== indexFrom721Template) {
-              return item;
-            }
+            return i !== indexFrom721Template;
           })
           const newErc20ArrayFromFactory = erc20ArrayFromFactory.filter((item, i) => {
-            if (i !== indexFrom721Template) {
-              return item;
-            }
+            return i !== indexFrom721Template;
           })
           await erc20.methods.deleteLicense(nftAddress, newErc20ArrayFrom721Template, newErc20ArrayFromFactory).send({ from: address, gas: 5000000, gasPrice: '10000000000' })
           resolve();
@@ -116,7 +112,7 @@ export const updateLicense = async (address, nftAddress, licenseAddress, updateD
     try {
       const erc20 = new chainObj.web3.eth.Contract(template20.abi, licenseAddress);
       const erc721address = await erc20.methods.getERC721Address().call({ from: address })
-      if (erc721address !== nftAddress) {
+      if (erc721address.toLowerCase() !== nftAddress.toLowerCase()) {
         reject(new Error("License not associated to " + nftAddress + " nft address"));
       }
       const propertyToFunctionMap = {
