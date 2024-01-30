@@ -7,7 +7,7 @@ const disconnectedState = { accounts: [], chainId: '' }
 const MetaMaskContext = createContext({})
 const ethers = require("ethers");
 const contractAbi = require('../contract/DataCellarRegistryABI');
-const contractAddress = "0x0dcA40e694DCcdBA2DFBB8ee16Bf68265f2Ffc3b";//To be changed every time
+const contractAddress = "0x0dcA40e694DCcdBA2DFBB8ee16Bf68265f2Ffc3b";
 
 export const MetaMaskContextProvider = ({ children }) => {
 
