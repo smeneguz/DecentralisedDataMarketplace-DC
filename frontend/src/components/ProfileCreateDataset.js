@@ -3,7 +3,7 @@ import "../App.css";
 import { useState } from 'react';
 import { useMetaMask } from '../hooks/useMetaMask'
 import { createDataset } from '../hooks/useMMdataset'
-import { validateSymbol, validateDatasetName, validateEthereumAddress } from "../hooks/utils";
+import { validateSymbol, validateDatasetName, validateTokenURI } from "../hooks/utils";
 
 function ProfileCreateDataset(props) {
 
@@ -19,7 +19,7 @@ function ProfileCreateDataset(props) {
     setIsConnecting(true);
     if (validateDatasetName(name)) {
       if (validateSymbol(symbol)) {
-        if (validateEthereumAddress(tokenURI)) {
+        if (validateTokenURI(tokenURI)) {
           try {
             await createDataset(wallet.accounts[0], name, symbol, tokenURI, transferable)
             props.setMessage(`The dataset has been created. You can see your new dataset in the "Manage your Datasets" section.`);

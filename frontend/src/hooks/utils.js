@@ -73,9 +73,9 @@ export function validateSymbol(symbol) {
   return symbolRegex.test(symbol);
 }
 
-export function validateEthereumAddress(address) {
-  const addressRegex = /^0x[a-fA-F0-9]{40}$/;
-  return addressRegex.test(address);
+export function validateTokenURI(url) {
+  const urlRegex = /^(https?|ftp):\/\/www\.[^\s/$.?#].[^\s]*$/i;
+  return urlRegex.test(url);
 }
 
 export function validateDatasetName(name) {
@@ -88,24 +88,18 @@ export function validateNumber(number) {
   return numberRegex.test(number);
 }
 
-export function truncateString(inputString) {
-  const maxLength = 8;
-  const ellipsis = '...';
-  if (inputString.length <= maxLength + 6) {
-    return inputString;
+export function truncateString(url) {
+  const prefixRegex = /^(https?|ftp):\/\/www\./i;
+  const truncatedUrl = url.replace(prefixRegex, '');
+
+  if (truncatedUrl.length > 20) {
+    return truncatedUrl.substring(0, 20) + '...';
   } else {
-    const truncatedString = inputString.slice(0, maxLength) + ellipsis + inputString.slice(-6);
-    return truncatedString;
+    return truncatedUrl;
   }
 }
 
-export function truncateString2(inputString) {
-  const maxLength = 14;
-  const ellipsis = '...';
-  if (inputString.length <= maxLength + 10) {
-    return inputString;
-  } else {
-    const truncatedString = inputString.slice(0, maxLength) + ellipsis + inputString.slice(-10);
-    return truncatedString;
-  }
+export function validateNFTaddress(address) {
+  const addressRegex = /^0x[a-fA-F0-9]{40}$/;
+  return addressRegex.test(address);
 }

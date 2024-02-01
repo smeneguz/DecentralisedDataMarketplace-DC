@@ -2,7 +2,7 @@ import { Row, Container, Table, Tooltip, OverlayTrigger } from "react-bootstrap"
 import "../App.css";
 import { useState, useEffect } from 'react';
 import { useMetaMask } from '../hooks/useMetaMask'
-import { truncateString2 } from "../hooks/utils";
+import { truncateString } from "../hooks/utils";
 import { default as License } from '../assets/license.svg';
 import MarketLicenses from "./MarketLicenses";
 import { getPublicDatasets } from "../hooks/useMMmarket";
@@ -28,7 +28,7 @@ function MarketDatasets(props) {
     };
     fetchData();
     return () => { };
-  }, [wallet.accounts, setErrorMessage, props.message, props]);
+  }, [wallet.accounts, setErrorMessage, props.message, wrongNetwork]);
 
   const renderTooltip = (props) => (
     <Tooltip className="ind" id="button-tooltip" {...props}>
@@ -69,7 +69,7 @@ function MarketDatasets(props) {
                         <td className="table-value text-center">{dataset.name}</td>
                         <td className="table-value text-center">{dataset.symbol}</td>
                         <td className="table-value text-center">
-                          <p className="uri" onClick={() => { window.open(dataset.getTokenUri, '_blank') }}> {truncateString2(dataset.getTokenUri)} </p>
+                          <p className="uri" onClick={() => { window.open(dataset.getTokenUri, '_blank') }}> {truncateString(dataset.getTokenUri)} </p>
                         </td>
                         <td className=" text-center">
                           <OverlayTrigger placement="bottom" delay={{ show: 250, hide: 400 }} overlay={renderTooltip} >

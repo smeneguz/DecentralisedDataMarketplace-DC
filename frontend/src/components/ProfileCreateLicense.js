@@ -3,7 +3,7 @@ import "../App.css";
 import { useState } from 'react';
 import { useMetaMask } from '../hooks/useMetaMask'
 import { createLicense } from '../hooks/useMMlicense'
-import { validateNumber, validateEthereumAddress, validateDatasetName, validateSymbol } from "../hooks/utils";
+import { validateNumber, validateNFTaddress, validateDatasetName, validateSymbol } from "../hooks/utils";
 
 function ProfileCreateLicenses(props) {
 
@@ -20,7 +20,7 @@ function ProfileCreateLicenses(props) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsConnecting(true);
-    if (validateEthereumAddress(NFTaddress)) {
+    if (validateNFTaddress(NFTaddress)) {
       if (validateDatasetName(name)) {
         if (validateSymbol(symbol)) {
           if (validateNumber(period) || period === "") {

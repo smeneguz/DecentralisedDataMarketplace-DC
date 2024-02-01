@@ -2,7 +2,7 @@ import { Button, Modal, Form, Row, Col } from "react-bootstrap";
 import "../App.css";
 import { useMetaMask } from '../hooks/useMetaMask'
 import { updateDataset } from '../hooks/useMMdataset'
-import { validateSymbol, validateDatasetName, validateEthereumAddress } from "../hooks/utils";
+import { validateSymbol, validateDatasetName, validateTokenURI } from "../hooks/utils";
 import { useState } from 'react';
 
 function UpdateDatasetModal(props) {
@@ -19,7 +19,7 @@ function UpdateDatasetModal(props) {
     setIsConnecting(true);
     if (validateDatasetName(name)) {
       if (validateSymbol(symbol)) {
-        if (validateEthereumAddress(tokenURI)) {
+        if (validateTokenURI(tokenURI)) {
           try {
             const updateData = {};
             if (name !== props.selectedDataset.name) { updateData.name = name; }

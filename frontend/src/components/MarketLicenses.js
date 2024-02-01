@@ -5,20 +5,24 @@ import { useMetaMask } from '../hooks/useMetaMask'
 import { default as Back } from '../assets/back.svg';
 import { getPublicLicenses } from "../hooks/useMMmarket";
 import PurchaseModal from "./ModalPurchase";
+import { getBalance } from "../hooks/useMMbalance";
 
 function MarketLicenses(props) {
 
   const [licenses, setLicenses] = useState([]);
   const [selectedLicense, setSelectedLicense] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [balance, setBalance] = useState("");
 
-  const { setErrorMessage, wallet,setNftAddress, nftAddress } = useMetaMask();
+  const { setErrorMessage, wallet, setNftAddress, nftAddress } = useMetaMask();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await getPublicLicenses(wallet.accounts[0], nftAddress);
         setLicenses(result);
+        const balance = await getBalance(wallet.accounts[0]);
+        setBalance(balance);
       } catch (error) {
         setErrorMessage(`${error.message}`);
       }
@@ -30,7 +34,7 @@ function MarketLicenses(props) {
   return (
     <Container fluid className="mt-5 pt-5 profile home  ">
 
-      {showModal && <PurchaseModal setShowModal={setShowModal} showModal={showModal} selectedLicense={selectedLicense} setMessage={props.setMessage}/>}
+      {showModal && <PurchaseModal setShowModal={setShowModal} showModal={showModal} selectedLicense={selectedLicense} setMessage={props.setMessage} />}
 
       <Row className='mx-5 mt-3 mb-5'>
         <Col md={3} className="mb-2">
@@ -43,9 +47,17 @@ function MarketLicenses(props) {
           <h6 className="inline2 subtitle"> {nftAddress}</h6>
         </Col>
       </Row>
-      <Row className='mx-5 inline-box mb-4'>
-        <h4 className="inline2 ">
-          {props.authState ? "Press the BUY button and purchase licenses using your DataCellar tokens." : "Sign up and Sign in to Data Cellar in order to purchase these licenses."} </h4>
+      <Row className='mx-5 inline-box mb-4 justify-content-between'>
+        <Col md={8} >
+          <h4 className="inline2 ">
+            {props.authState ? "Press the BUY button and purchase licenses using your DataCellar tokens." : "Sign up and Sign in to Data Cellar in order to purchase these licenses."} </h4>
+        </Col>
+        {props.authState ?
+          <Col md={4} className=" market-line balance-box mb-2 me-3 " >
+            <h6 className=" file mt-1 "> Your Balance: </h6>
+            <h6 className=" subtitle file"> {balance} DataCellar tokens</h6>
+          </Col> : ""
+        }
       </Row>
       <Row className="mx-5 mt-5">
         <Table responsive striped bordered hover className="table-border" >

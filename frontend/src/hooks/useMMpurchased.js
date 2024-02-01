@@ -76,10 +76,10 @@ export const consumeNFT = async (address, nftAddress, licenseAddress) => {
     const owner = await erc721.methods.ownerAddress().call({ from: address });
     const allowanceOwner = await erc20.methods.allowance(owner, nftAddress).call({ from: address });
     const allowanceConsumer = await erc20.methods.allowance(address, nftAddress).call({ from: address });
-    if (allowanceConsumer === 0) {
+    if (parseInt(allowanceConsumer) === 0) {
       await erc20.methods.approve(nftAddress, 1).send({ from: address, gas: 5000000, gasPrice: '10000000000' })
     }
-    if (allowanceOwner === 0) {
+    if (parseInt(allowanceOwner) === 0) {
       await erc20.methods.approve(nftAddress, 1).send({ from: owner, gas: 5000000, gasPrice: '10000000000' })
     }
     await erc721.methods.requestConsumeNFT(licenseAddress).send({ from: address, gas: 5000000, gasPrice: '10000000000' })
