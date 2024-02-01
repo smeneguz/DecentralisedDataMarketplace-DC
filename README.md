@@ -1,5 +1,5 @@
 <a href="https://datacellarproject.eu/">
-  <img src="./img/logo/Logo.png" title="DATA CELLAR" height="60" align="right">
+  <img src="./backendapis/img/logo/Logo.png" title="DATA CELLAR" height="40" align="right">
 </a>
 
 # DataCellar dApp Project
