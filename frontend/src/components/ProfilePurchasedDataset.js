@@ -5,6 +5,7 @@ import { useMetaMask } from '../hooks/useMetaMask'
 import { default as License } from '../assets/license.svg';
 import ProfilePurchasedLicense from "./ProfilePurchasedLicense";
 import { getPurchasedDatasets } from "../hooks/useMMpurchased";
+import { truncateString2 } from "../hooks/utils";
 
 function ProfilePurchasedDataset(props) {
 
@@ -60,7 +61,7 @@ function ProfilePurchasedDataset(props) {
                     <td className="table-value text-center">{dataset.name}</td>
                     <td className="table-value text-center">{dataset.symbol}</td>
                     <td className="table-value text-center">
-                      <p className="uri" onClick={() => { window.open(dataset.tokenURI, '_blank') }}> {dataset.tokenURI} </p>
+                      <p className="uri" onClick={() => { window.open(dataset.tokenURI, '_blank') }}> {truncateString2(dataset.tokenURI)} </p>
                     </td>
                     <td className=" text-center">
                       <OverlayTrigger placement="bottom" delay={{ show: 250, hide: 400 }} overlay={renderTooltip3} >

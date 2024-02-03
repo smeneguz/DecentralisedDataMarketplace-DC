@@ -103,3 +103,14 @@ export function validateNFTaddress(address) {
   const addressRegex = /^0x[a-fA-F0-9]{40}$/;
   return addressRegex.test(address);
 }
+
+export function truncateString2(url) {
+  const prefixRegex = /^(https?|ftp):\/\/www\./i;
+  const truncatedUrl = url.replace(prefixRegex, '');
+
+  if (truncatedUrl.length > 40) {
+    return truncatedUrl.substring(0, 40) + '...';
+  } else {
+    return truncatedUrl;
+  }
+}
