@@ -1,5 +1,5 @@
 <a href="https://datacellarproject.eu/">
-  <img src="./backendapis/img/logo/Logo.png" title="DATA CELLAR" height="40" align="right">
+  <img src="./backend/img/logo/Logo.png" title="DATA CELLAR" height="40" align="right">
 </a>
 
 # DataCellar dApp Project
@@ -24,6 +24,9 @@ This repository is organized into three main sub-folders, each dedicated to a sp
   - [Requirements](#requirements)
     - [dApp Version](#dapp-version)
   - [Installation](#installation)
+  - [MetaMask Setup](#metamask-setup)
+    - [Add Ganache Network](#add-ganache-network)
+    - [Import accounts](#import-accounts)
   - [Contributions](#contributions)
   - [License](#license)
 
@@ -122,6 +125,36 @@ The complete readme sequence you must follow in order to use this application is
   <a href="frontend/README.md">frontend README</a>
 </p>
 
+After that you have to setup MetaMask for the usage with the blockchain Ganache running into the Docker. 
+
+## MetaMask Setup
+
+### Add Ganache Network
+
+1. Open the MetaMask extension and click on the three dots at the top right.
+2. Select "Settings" > "Networks" > "Add Network".
+3. A browser page will open. Click on "Manually Add a Network" at the bottom.
+4. Fill in the form fields with the following details:
+   - "Network Name": "Ganache"
+   - "RPC URL": "http://localhost:8545/"
+   - "Chain ID": "1337"
+   - "Currency Symbol": "ETH"
+5. Click the "Save" button.
+6. Back in the MetaMask extension, click on the network icon in the upper left corner.
+7. Select "Show Network Dropdown" > "Ganache".
+
+### Import accounts 
+
+1. Open Docker Desktop.
+2. Click on the "backend" container and then on "blockchain-DataCellar."
+3. Go to the top of the transaction history on the blockchain until it is created.
+4. Copy the private key of the account you want to import into MetaMask (not account 0).
+5. Open the MetaMask extension.
+6. Click on the name of the account in use at the top center.
+7. Select "Add Account or Hardware Wallet" at the bottom.
+8. Choose "Import Account."
+9. Enter the private key copied earlier.
+10. Press "Import."
 
 ## Contributions
 
