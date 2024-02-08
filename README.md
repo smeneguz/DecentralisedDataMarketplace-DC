@@ -1,4 +1,4 @@
-<a href="https://datacellarproject.eu/">
+[<a href="https://datacellarproject.eu/">
   <img src="./img/logo/Logo.png" title="DATA CELLAR" height="60" align="right">
 </a>
 
@@ -7,8 +7,7 @@
 This dApp version of DataCellar was born from the integration of a stand-alone SSI (Self-sovereign identity) system, based on the use of MetaMask as a secure wallet, with the original backend made DataCellar project.
 
 The previous release contained a set of reduced features to start presenting the architecture, through the use of docker containers for external services, and Blockchain-based logic through the implementation of specific smart contracts.
-
-The key aspect of the simulation is to highlight the process of digitization of energy data and its exchange between users through the purchase of periodic and one-time licenses.
+scess of digitization of energy data and its exchange between users through the purchase of periodic and one-time licenses.
 
 This repository is organized into three main sub-folders, each dedicated to a specific aspect of the project. 
 
@@ -115,3 +114,4 @@ Now it is necessary to go to the "backendapis" folder and follow the instruction
 ## License
 
 The Data Cellar DLT Marketplace is [MIT licensed](LICENSE).
+](https://github.com/smeneguz/DataCellar.git)https://github.com/smeneguz/DataCellar.git
