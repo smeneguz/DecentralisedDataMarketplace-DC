@@ -1,5 +1,5 @@
-[<a href="https://datacellarproject.eu/">
-  <img src="./img/logo/Logo.png" title="DATA CELLAR" height="60" align="right">
+<a href="https://datacellarproject.eu/">
+  <img src="./backend/img/logo/Logo.png" title="DATA CELLAR" height="40" align="right">
 </a>
 
 # DataCellar dApp Project
@@ -7,7 +7,8 @@
 This dApp version of DataCellar was born from the integration of a stand-alone SSI (Self-sovereign identity) system, based on the use of MetaMask as a secure wallet, with the original backend made DataCellar project.
 
 The previous release contained a set of reduced features to start presenting the architecture, through the use of docker containers for external services, and Blockchain-based logic through the implementation of specific smart contracts.
-scess of digitization of energy data and its exchange between users through the purchase of periodic and one-time licenses.
+
+The key aspect of the simulation is to highlight the process of digitization of energy data and its exchange between users through the purchase of periodic and one-time licenses.
 
 This repository is organized into three main sub-folders, each dedicated to a specific aspect of the project. 
 
@@ -21,7 +22,11 @@ This repository is organized into three main sub-folders, each dedicated to a sp
     - [2. Frontend](#2-frontend)
     - [3. SmartContracts](#3-smartcontracts)
   - [Requirements](#requirements)
+    - [dApp Version](#dapp-version)
   - [Installation](#installation)
+  - [MetaMask Setup](#metamask-setup)
+    - [Add Ganache Network](#add-ganache-network)
+    - [Import accounts](#import-accounts)
   - [Contributions](#contributions)
   - [License](#license)
 
@@ -91,6 +96,11 @@ v18.17.1
 ```
 Repeat the same command for the other installed packages.
 
+### dApp Version
+
+This version of DataCellar relies on using MetaMask to be able to make transactions to the blockchain through user accounts. 
+
+It is therefore necessary to install the browser extension via the link: [Download MetaMask](https://metamask.io/download/).
 
 ## Installation
 
@@ -105,6 +115,46 @@ git checkout dApp
 
 Now it is necessary to go to the "backendapis" folder and follow the instructions in the readme of that folder to be able to run the docker and the server.
 
+The complete readme sequence you must follow in order to use this application is:
+
+<p align="center">
+<a href="backendapis/README.md">backendapis README</a><br>
+  ↓<br>
+  <a href="smartcontracts/README.md">smartcontracts README</a><br>
+  ↓<br>
+  <a href="frontend/README.md">frontend README</a>
+</p>
+
+After that you have to setup MetaMask for the usage with the blockchain Ganache running into the Docker. 
+
+## MetaMask Setup
+
+### Add Ganache Network
+
+1. Open the MetaMask extension and click on the three dots at the top right.
+2. Select "Settings" > "Networks" > "Add Network".
+3. A browser page will open. Click on "Manually Add a Network" at the bottom.
+4. Fill in the form fields with the following details:
+   - "Network Name": "Ganache"
+   - "RPC URL": "http://localhost:8545/"
+   - "Chain ID": "1337"
+   - "Currency Symbol": "ETH"
+5. Click the "Save" button.
+6. Back in the MetaMask extension, click on the network icon in the upper left corner.
+7. Select "Show Network Dropdown" > "Ganache".
+
+### Import accounts 
+
+1. Open Docker Desktop.
+2. Click on the "backend" container and then on "blockchain-DataCellar."
+3. Go to the top of the transaction history on the blockchain until it is created.
+4. Copy the private key of the account you want to import into MetaMask (not account 0).
+5. Open the MetaMask extension.
+6. Click on the name of the account in use at the top center.
+7. Select "Add Account or Hardware Wallet" at the bottom.
+8. Choose "Import Account."
+9. Enter the private key copied earlier.
+10. Press "Import."
 
 ## Contributions
 
@@ -114,4 +164,3 @@ Now it is necessary to go to the "backendapis" folder and follow the instruction
 ## License
 
 The Data Cellar DLT Marketplace is [MIT licensed](LICENSE).
-](https://github.com/smeneguz/DataCellar.git)https://github.com/smeneguz/DataCellar.git
