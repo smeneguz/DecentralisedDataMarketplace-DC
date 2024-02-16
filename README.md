@@ -2,7 +2,7 @@
   <img src="./backend/img/logo/Logo.png" title="DATA CELLAR" height="40" align="right">
 </a>
 
-# DataCellar dApp Project
+# DataCellar dApp Project - dApp Branch README
 
 This dApp version of DataCellar was born from the integration of a stand-alone SSI (Self-sovereign identity) system, based on the use of MetaMask as a secure wallet, with the original backend made DataCellar project.
 
@@ -158,7 +158,7 @@ After that you have to setup MetaMask for the usage with the blockchain Ganache 
 
 ## Contributions
 
-- Author - [Luca Rota](https://it.linkedin.com/in/luca-rota-872036285), [Alessandro Mozzato](https://it.linkedin.com/in/alessandro-mozzato-32479420b?trk=people-guest_people_search-card), [Silvio Meneguzzo](https://www.linkedin.com/in/silvio-arras-meneguzzo-a29681127/), [Alfredo Favenza](https://www.linkedin.com/in/alfredofavenza/)
+- Author - [Luca Rota](https://it.linkedin.com/in/luca-rota-872036285), [Silvio Meneguzzo](https://www.linkedin.com/in/silvio-arras-meneguzzo-a29681127/), [Alessandro Mozzato](https://it.linkedin.com/in/alessandro-mozzato-32479420b?trk=people-guest_people_search-card), [Alfredo Favenza](https://www.linkedin.com/in/alfredofavenza/)
 - Company - [Fondazione LINKS](https://linksfoundation.com/)
 
 ## License
