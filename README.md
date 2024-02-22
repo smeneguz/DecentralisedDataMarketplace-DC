@@ -158,7 +158,7 @@ After that you have to setup MetaMask for the usage with the blockchain Ganache 
 
 ## Contributions
 
-- Author - [Luca Rota](https://it.linkedin.com/in/luca-rota-872036285), [Alessandro Mozzato](https://it.linkedin.com/in/alessandro-mozzato-32479420b?trk=people-guest_people_search-card), [Silvio Meneguzzo](https://www.linkedin.com/in/silvio-arras-meneguzzo-a29681127/), [Alfredo Favenza](https://www.linkedin.com/in/alfredofavenza/)
+- Author -  [Silvio Meneguzzo](https://www.linkedin.com/in/silvio-arras-meneguzzo-a29681127/), [Luca Rota](https://it.linkedin.com/in/luca-rota-872036285), [Alessandro Mozzato](https://it.linkedin.com/in/alessandro-mozzato-32479420b?trk=people-guest_people_search-card), [Alfredo Favenza](https://www.linkedin.com/in/alfredofavenza/)
 - Company - [Fondazione LINKS](https://linksfoundation.com/)
 
 ## License
